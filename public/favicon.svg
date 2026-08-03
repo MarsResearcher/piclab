@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="PicLab">
+  <!-- Graphite plate  digital darkroom -->
+  <rect width="32" height="32" rx="8" fill="#0b0e11"/>
+  <!-- Soft inner well -->
+  <rect x="2.5" y="2.5" width="27" height="27" rx="6.5" fill="#12161b" stroke="#1e252c" stroke-width="1"/>
+  <!-- Crop / frame corners (tool language) -->
+  <path
+    fill="none"
+    stroke="#34d3c0"
+    stroke-width="2"
+    stroke-linecap="square"
+    d="M9 13V9h4M19 9h4v4M23 19v4h-4M13 23H9v-4"
+  />
+  <!-- Center pixel cluster  lab / raster signal -->
+  <rect x="14" y="14" width="4" height="4" rx="0.6" fill="#34d3c0"/>
+  <rect x="11.5" y="14" width="1.8" height="1.8" rx="0.3" fill="#34d3c0" opacity="0.45"/>
+  <rect x="18.7" y="16.2" width="1.8" height="1.8" rx="0.3" fill="#34d3c0" opacity="0.45"/>
+</svg>
