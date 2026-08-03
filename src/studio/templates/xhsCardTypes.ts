@@ -96,7 +96,7 @@ function putAttach(
   selectId?: string,
 ): void {
   for (const n of nodes) doc.nodes[n.id] = n;
-  frame.children = nodes.map((n) => n.id);
+  frame.children = nodes.filter((n) => n.parentId === frame.id).map((n) => n.id);
   doc.nodes[frame.id] = frame;
   if (selectId) doc.selection = [selectId];
 }
@@ -946,7 +946,7 @@ export function buildXhsSuiteDocument(
     frame.name = xhsFrameName(ct);
     const { nodes } = buildXhsCardNodes(frameId, ct, theme);
     for (const n of nodes) doc.nodes[n.id] = n;
-    frame.children = nodes.map((n) => n.id);
+    frame.children = nodes.filter((n) => n.parentId === frameId).map((n) => n.id);
   }
   doc.activePageId = doc.pages[0]!.id;
   applyXhsTheme(doc, theme);

@@ -179,7 +179,7 @@ export function makeShape(
 export function makeGroup(
   parentId: string,
   childIds: string[],
-  opts?: { x?: number; y?: number; name?: string; locked?: boolean },
+  opts?: { x?: number; y?: number; name?: string; locked?: boolean; opacity?: number },
 ): GroupNode {
   return {
     id: createId('group'),
@@ -187,7 +187,7 @@ export function makeGroup(
     type: 'group',
     visible: true,
     locked: opts?.locked ?? false,
-    opacity: 1,
+    opacity: opts?.opacity ?? 1,
     parentId,
     transform: identityTransform(opts?.x ?? 0, opts?.y ?? 0),
     children: childIds,

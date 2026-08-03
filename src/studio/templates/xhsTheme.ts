@@ -14,7 +14,7 @@ import {
   type TextNode,
 } from '../model';
 import { makeShape } from '../scenes/helpers';
-import { makeRuledLines, makeVeil } from './templateCraft';
+import { makeRuledLines, makeVeil, purgeNodeTree, rootIdsOf } from './templateCraft';
 import {
   makeDashedFrame,
   makeHairline,
@@ -388,11 +388,9 @@ export function buildXhsPaperLayers(frameId: string, theme: XhsTheme): SceneNode
         gap: 84,
         stroke: pal.ink,
         strokeWidth: 1.2,
-      }).map((line, idx) => ({
-        ...line,
-        name: `${XHS_NAME.bgDecorPrefix}Rule${idx + 1}`,
+        name: `${XHS_NAME.bgDecorPrefix}Rules`,
         opacity: 0.1,
-      })),
+      }),
     );
   }
 
@@ -571,11 +569,9 @@ export function buildXhsSkinChrome(frameId: string, theme: XhsTheme): SceneNode[
             gap: 90,
             stroke: pal.ink,
             strokeWidth: 1.2,
-          }).map((line, idx) => ({
-            ...line,
-            name: `${p}Rule${idx + 1}`,
+            name: `${p}Rules`,
             opacity: 0.12,
-          })),
+          }),
         );
       }
       break;
@@ -626,7 +622,7 @@ function removeDecor(frameId: string, doc: StudioDocument): void {
       n.name.startsWith(XHS_NAME.skinPrefix) ||
       n.name.startsWith('\u6a2a\u7ebf')
     ) {
-      delete doc.nodes[cid];
+      purgeNodeTree(doc, cid);
       continue;
     }
     keep.push(cid);
@@ -639,7 +635,7 @@ function insertDecor(frameId: string, doc: StudioDocument, theme: XhsTheme): voi
   if (!frame || !isFrame(frame)) return;
   const layers = [...buildXhsPaperLayers(frameId, theme), ...buildXhsSkinChrome(frameId, theme)];
   for (const n of layers) doc.nodes[n.id] = n;
-  frame.children = [...layers.map((n) => n.id), ...frame.children];
+  frame.children = [...rootIdsOf(layers, frameId), ...frame.children];
   frame.fill = getXhsPalette(theme.palette).bg;
 }
 

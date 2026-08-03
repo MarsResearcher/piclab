@@ -26,6 +26,7 @@ import {
   getXhsPalette,
   resolveXhsTheme,
 } from '../templates';
+import { makeRuledLines, rootIdsOf } from '../templates/templateCraft';
 import { getNodeStrategy } from '../engine/nodeStrategies';
 import { assertProjectFolderFilters } from '../store/projectFolders.selftest';
 
@@ -116,6 +117,21 @@ export function runOfflineSmoke(): SmokeResult[] {
     );
     const lucideCount = STICKER_CATALOG.filter((s) => s.source.kind === 'lucide').length;
     const illustCount = STICKER_CATALOG.filter((s) => s.source.kind === 'illustration').length;
+    const ruled = makeRuledLines('frame-smoke', {
+      x: 0,
+      y0: 0,
+      width: 200,
+      count: 8,
+      gap: 12,
+      name: 'bg:Rules',
+      opacity: 0.1,
+    });
+    const ruledGroup = ruled[0];
+    const ruledOk =
+      ruledGroup?.type === 'group' &&
+      ruledGroup.name === 'bg:Rules' &&
+      ruledGroup.children.length === 8 &&
+      rootIdsOf(ruled, 'frame-smoke').length === 1;
     results.push({
       name: 'xhs-atmosphere',
       ok:
@@ -123,8 +139,9 @@ export function runOfflineSmoke(): SmokeResult[] {
         journal.length >= 6 &&
         stickerSrcOk &&
         lucideCount >= 40 &&
-        illustCount >= 6,
-      detail: `stickers=${STICKER_CATALOG.length} lucide=${lucideCount} illust=${illustCount} journal=${journal.length}`,
+        illustCount >= 6 &&
+        ruledOk,
+      detail: `stickers=${STICKER_CATALOG.length} lucide=${lucideCount} illust=${illustCount} journal=${journal.length} ruledGroup=${ruledOk}`,
     });
   } catch (e) {
     results.push({

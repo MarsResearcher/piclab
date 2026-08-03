@@ -23,13 +23,10 @@ import {
 import {
   makeCloudHeaderBar,
   makeHighlighterOval,
+  makeJournalShell,
   makeOffsetShadowCard,
-  makePastelField,
-  makeSketchFrame,
   makeSpeechBubble,
-  makeSpiralNotebook,
   makeWavyUnderline,
-  makeWindowChrome,
   placeCornerStickers,
   scatterStickers,
 } from './xhsAtmosphere';
@@ -39,7 +36,7 @@ function put(doc: StudioDocument, nodes: SceneNode[]): void {
 }
 
 function finish(doc: StudioDocument, frame: FrameNode, nodes: SceneNode[]): StudioDocument {
-  frame.children.push(...nodes.map((n) => n.id));
+  frame.children.push(...nodes.filter((n) => n.parentId === frame.id).map((n) => n.id));
   put(doc, [frame, ...nodes]);
   return doc;
 }
@@ -76,22 +73,21 @@ const sigJournalSpring: BuiltinTemplate = {
     const frame = makeFrame(frameId, W, H, '\u7b14\u8bb0', pink);
     const pad = 56;
     const nodes: SceneNode[] = [
-      ...makePastelField(frameId, {
-        x: 0,
-        y: 0,
+      makeJournalShell(frameId, assets, {
         width: W,
         height: H,
-        fill: pink,
+        field: pink,
         grid: 'rgba(255,255,255,0.35)',
-      }),
-      ...makeSketchFrame(frameId, {
-        x: pad,
-        y: pad + 40,
-        width: W - pad * 2,
-        height: H - pad * 2 - 40,
-        fill: '#FFFCF9',
-        stroke: pink,
-        accent: '#F4A7B9',
+        page: {
+          kind: 'sketch',
+          x: pad,
+          y: pad + 40,
+          width: W - pad * 2,
+          height: H - pad * 2 - 40,
+          fill: '#FFFCF9',
+          stroke: pink,
+          accent: '#F4A7B9',
+        },
       }),
       makeRoleText(frameId, 'meta', 'HUAN QI CHUN RI', W / 2, 140, XHS_SIG_RAMP, {
         name: '\u526f\u6807',
@@ -185,22 +181,18 @@ const sigJournalWishlist: BuiltinTemplate = {
       '\u5750\u4e0b\u6765\u559d\u676f\u9759\u9759\u7684\u8336',
     ];
     const nodes: SceneNode[] = [
-      makeShape(frameId, 'roundRect', {
-        x: 0,
-        y: 0,
+      makeJournalShell(frameId, assets, {
         width: W,
         height: H,
-        fill: peach,
-        cornerRadius: 0,
-        name: '\u5e95\u573a',
-        locked: true,
-      }),
-      ...makeSpiralNotebook(frameId, {
-        x: paperX,
-        y: paperY,
-        width: paperW,
-        height: paperH,
-        ring: '#1E3A5F',
+        field: peach,
+        page: {
+          kind: 'spiral',
+          x: paperX,
+          y: paperY,
+          width: paperW,
+          height: paperH,
+          ring: '#1E3A5F',
+        },
       }),
       makeRoleText(frameId, 'meta', '\u300a 2026 WISHLIST \u300b', W / 2, paperY + 56, XHS_SIG_RAMP, {
         name: '\u526f\u6807',
@@ -282,16 +274,21 @@ const sigJournalEmergency: BuiltinTemplate = {
     const { doc, frameId } = emptyDoc('\u5e94\u6025\u5e72\u8d27', 'xhsNote');
     const frame = makeFrame(frameId, W, H, '\u7b14\u8bb0', field);
     const nodes: SceneNode[] = [
-      ...makePastelField(frameId, { x: 0, y: 0, width: W, height: H, fill: field }),
-      ...makeSketchFrame(frameId, {
-        x: 48,
-        y: 64,
-        width: W - 96,
-        height: H - 128,
-        fill: '#FFFCF7',
-        stroke: ink,
-        accent: field,
-        radius: 12,
+      makeJournalShell(frameId, assets, {
+        width: W,
+        height: H,
+        field,
+        page: {
+          kind: 'sketch',
+          x: 48,
+          y: 64,
+          width: W - 96,
+          height: H - 128,
+          fill: '#FFFCF7',
+          stroke: ink,
+          accent: field,
+          radius: 12,
+        },
       }),
       ...makePillBadge(frameId, {
         x: 80,
@@ -397,25 +394,22 @@ const sigJournalTime: BuiltinTemplate = {
     const cardW = W - 128;
     const cardH = H - 160;
     const nodes: SceneNode[] = [
-      makeShape(frameId, 'roundRect', {
-        x: 0,
-        y: 0,
+      makeJournalShell(frameId, assets, {
         width: W,
         height: H,
-        fill: yellow,
-        name: '\u5e95\u573a',
-        locked: true,
-      }),
-      ...makeOffsetShadowCard(frameId, {
-        x: cardX,
-        y: cardY,
-        width: cardW,
-        height: cardH,
-        fill: '#FFFCF7',
-        shadow: '#E85D7A',
-        offset: 12,
-        stroke: ink,
-        strokeWidth: 5,
+        field: yellow,
+        page: {
+          kind: 'offsetCard',
+          x: cardX,
+          y: cardY,
+          width: cardW,
+          height: cardH,
+          fill: '#FFFCF7',
+          shadow: '#E85D7A',
+          offset: 12,
+          stroke: ink,
+          strokeWidth: 5,
+        },
       }),
       makeRoleText(frameId, 'display', '\u522b\u8ba9\u4e0d\u4f1a', cardX + 48, cardY + 80, XHS_SIG_RAMP, {
         name: '\u6807\u9898',
@@ -504,14 +498,19 @@ const sigJournalWindow: BuiltinTemplate = {
       { t: '\u7ed3\u5c3e\u7559\u4e00\u4e2a\u52a8\u4f5c', d: '\u6536\u85cf / \u8bd5\u4e00\u4e0b / \u8ddf\u505a' },
     ];
     const nodes: SceneNode[] = [
-      ...makePastelField(frameId, { x: 0, y: 0, width: W, height: H, fill: mint }),
-      ...makeWindowChrome(frameId, {
-        x: wx,
-        y: wy,
-        width: ww,
-        height: wh,
-        barFill: '#FFF3D6',
-        fill: '#FFFCF7',
+      makeJournalShell(frameId, assets, {
+        width: W,
+        height: H,
+        field: mint,
+        page: {
+          kind: 'window',
+          x: wx,
+          y: wy,
+          width: ww,
+          height: wh,
+          barFill: '#FFF3D6',
+          fill: '#FFFCF7',
+        },
       }),
       makeRoleText(frameId, 'display', '\u5e72\u8d27\u6392\u7248\u56db\u62db', wx + 48, wy + 100, XHS_SIG_RAMP, {
         name: '\u6807\u9898',
@@ -597,7 +596,7 @@ const sigJournalSticky: BuiltinTemplate = {
     const { doc, frameId } = emptyDoc('\u4fbf\u7b7e Tips', 'xhsNote');
     const frame = makeFrame(frameId, W, H, '\u7b14\u8bb0', field);
     const nodes: SceneNode[] = [
-      ...makePastelField(frameId, { x: 0, y: 0, width: W, height: H, fill: field }),
+      makeJournalShell(frameId, assets, { width: W, height: H, field }),
       makeRoleText(frameId, 'display', '\u4eca\u5929\u7684\u4e09\u5f20\u4fbf\u7b7e', W / 2, 100, XHS_SIG_RAMP, {
         name: '\u6807\u9898',
         align: 'center',
@@ -685,18 +684,21 @@ const sigJournalTorn: BuiltinTemplate = {
     const { doc, frameId } = emptyDoc('\u6495\u8fb9\u7b14\u8bb0', 'xhsNote');
     const frame = makeFrame(frameId, W, H, '\u7b14\u8bb0', field);
     const nodes: SceneNode[] = [
-      ...makePastelField(frameId, { x: 0, y: 0, width: W, height: H, fill: field }),
-      makeShape(frameId, 'roundRect', {
-        x: 64,
-        y: 120,
-        width: W - 128,
-        height: H - 280,
-        fill: '#FFFCF7',
-        stroke: ink,
-        strokeWidth: 3,
-        cornerRadius: 4,
-        name: '\u7eb8\u58f3',
-        locked: true,
+      makeJournalShell(frameId, assets, {
+        width: W,
+        height: H,
+        field,
+        page: {
+          kind: 'plain',
+          x: 64,
+          y: 120,
+          width: W - 128,
+          height: H - 280,
+          fill: '#FFFCF7',
+          stroke: ink,
+          strokeWidth: 3,
+          radius: 4,
+        },
       }),
       ...makeTornBand(frameId, {
         x: 64,
@@ -784,15 +786,20 @@ const sigJournalSteps: BuiltinTemplate = {
       { n: '03', t: '\u7528\u8d34\u7eb8\u6536\u5c3e', d: '\u89d2\u843d\u7559\u4e00\u4e2a\u5c0f\u60ca\u559c' },
     ];
     const nodes: SceneNode[] = [
-      ...makePastelField(frameId, { x: 0, y: 0, width: W, height: H, fill: field }),
-      ...makeOffsetShadowCard(frameId, {
-        x: 56,
-        y: 64,
-        width: W - 112,
-        height: H - 128,
-        fill: '#FFFCF7',
-        shadow: '#F5A623',
-        offset: 10,
+      makeJournalShell(frameId, assets, {
+        width: W,
+        height: H,
+        field,
+        page: {
+          kind: 'offsetCard',
+          x: 56,
+          y: 64,
+          width: W - 112,
+          height: H - 128,
+          fill: '#FFFCF7',
+          shadow: '#F5A623',
+          offset: 10,
+        },
       }),
       makeRoleText(frameId, 'display', '\u5e72\u8d27\u4e5f\u8981\u6709\u6c1b\u56f4', W / 2, 140, XHS_SIG_RAMP, {
         name: '\u6807\u9898',

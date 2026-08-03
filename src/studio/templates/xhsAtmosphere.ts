@@ -4,9 +4,10 @@
  */
 
 import type { AssetStore } from '../store/assetStore';
-import type { SceneNode, ShapeNode } from '../model';
+import type { ImageNode, SceneNode, ShapeNode } from '../model';
 import { makeLine, makeShape } from '../scenes/helpers';
 import { makeAccentStroke, makeVeil } from './templateCraft';
+import { makeImageInRect } from './templateAssets';
 import { makeRoleText, type TypeRamp } from './templateType';
 import { FONT_META, FONT_SANS, FONT_YUAN } from './templatePalettes';
 import { XHS_SIG_RAMP } from './xhsComposition';
@@ -336,9 +337,280 @@ export function makeWindowChrome(
   return nodes;
 }
 
-/** Soft pastel field with optional diagonal grid hint. */
+/** Inner page chrome baked into the journal shell (not separate layers). */
+export type JournalShellPage =
+  | {
+      kind: 'sketch';
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+      fill?: string;
+      stroke?: string;
+      accent?: string;
+      radius?: number;
+    }
+  | {
+      kind: 'plain';
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+      fill?: string;
+      stroke?: string;
+      strokeWidth?: number;
+      radius?: number;
+    }
+  | {
+      kind: 'offsetCard';
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+      fill?: string;
+      shadow?: string;
+      offset?: number;
+      radius?: number;
+      stroke?: string;
+      strokeWidth?: number;
+    }
+  | {
+      kind: 'spiral';
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+      paper?: string;
+      ring?: string;
+      hole?: string;
+    }
+  | {
+      kind: 'window';
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+      fill?: string;
+      barFill?: string;
+      stroke?: string;
+      barH?: number;
+    };
+
+function roundRectPath(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  r: number,
+): void {
+  const radius = Math.max(0, Math.min(r, w / 2, h / 2));
+  ctx.beginPath();
+  ctx.moveTo(x + radius, y);
+  ctx.arcTo(x + w, y, x + w, y + h, radius);
+  ctx.arcTo(x + w, y + h, x, y + h, radius);
+  ctx.arcTo(x, y + h, x, y, radius);
+  ctx.arcTo(x, y, x + w, y, radius);
+  ctx.closePath();
+}
+
+function paintField(
+  ctx: CanvasRenderingContext2D,
+  w: number,
+  h: number,
+  fill: string,
+  grid?: string,
+  gridStep = 48,
+): void {
+  ctx.fillStyle = fill;
+  ctx.fillRect(0, 0, w, h);
+  if (!grid) return;
+  ctx.strokeStyle = grid;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  for (let x = 0; x <= w; x += gridStep) {
+    ctx.moveTo(x + 0.5, 0);
+    ctx.lineTo(x + 0.5, h);
+  }
+  for (let y = 0; y <= h; y += gridStep) {
+    ctx.moveTo(0, y + 0.5);
+    ctx.lineTo(w, y + 0.5);
+  }
+  ctx.stroke();
+}
+
+function paintShellPage(ctx: CanvasRenderingContext2D, page: JournalShellPage): void {
+  switch (page.kind) {
+    case 'sketch': {
+      const fill = page.fill ?? '#FFFCF7';
+      const stroke = page.stroke ?? '#1A1510';
+      const accent = page.accent ?? '#F4A7B9';
+      const radius = page.radius ?? 18;
+      roundRectPath(ctx, page.x + 5, page.y + 5, page.width, page.height, radius);
+      ctx.strokeStyle = accent;
+      ctx.lineWidth = 3;
+      ctx.stroke();
+      roundRectPath(ctx, page.x, page.y, page.width, page.height, radius);
+      ctx.fillStyle = fill;
+      ctx.fill();
+      ctx.strokeStyle = stroke;
+      ctx.lineWidth = 4;
+      ctx.stroke();
+      break;
+    }
+    case 'plain': {
+      const radius = page.radius ?? 4;
+      roundRectPath(ctx, page.x, page.y, page.width, page.height, radius);
+      ctx.fillStyle = page.fill ?? '#FFFCF7';
+      ctx.fill();
+      if (page.stroke) {
+        ctx.strokeStyle = page.stroke;
+        ctx.lineWidth = page.strokeWidth ?? 3;
+        ctx.stroke();
+      }
+      break;
+    }
+    case 'offsetCard': {
+      const off = page.offset ?? 10;
+      const radius = page.radius ?? 16;
+      roundRectPath(ctx, page.x + off, page.y + off, page.width, page.height, radius);
+      ctx.fillStyle = page.shadow ?? '#E85D7A';
+      ctx.fill();
+      roundRectPath(ctx, page.x, page.y, page.width, page.height, radius);
+      ctx.fillStyle = page.fill ?? '#FFFCF7';
+      ctx.fill();
+      ctx.strokeStyle = page.stroke ?? '#1A1510';
+      ctx.lineWidth = page.strokeWidth ?? 4;
+      ctx.stroke();
+      break;
+    }
+    case 'spiral': {
+      const paper = page.paper ?? '#FFFCF7';
+      const ring = page.ring ?? '#1E3A5F';
+      const hole = page.hole ?? '#E8E0D4';
+      roundRectPath(ctx, page.x, page.y, page.width, page.height, 8);
+      ctx.fillStyle = paper;
+      ctx.fill();
+      const margin = 28;
+      const count = Math.max(6, Math.floor(page.height / 90));
+      const step = (page.height - margin * 2) / (count - 1);
+      for (let i = 0; i < count; i++) {
+        const cy = page.y + margin + i * step;
+        ctx.beginPath();
+        ctx.ellipse(page.x + 27, cy, 9, 9, 0, 0, Math.PI * 2);
+        ctx.fillStyle = hole;
+        ctx.fill();
+        ctx.strokeStyle = 'rgba(26,21,16,0.15)';
+        ctx.lineWidth = 1;
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.ellipse(page.x + 19, cy, 11, 12, 0, 0, Math.PI * 2);
+        ctx.strokeStyle = ring;
+        ctx.lineWidth = 5;
+        ctx.stroke();
+      }
+      break;
+    }
+    case 'window': {
+      const barH = page.barH ?? 48;
+      const fill = page.fill ?? '#FFFCF7';
+      const barFill = page.barFill ?? '#FFF3D6';
+      const stroke = page.stroke ?? '#1A1510';
+      roundRectPath(ctx, page.x, page.y, page.width, page.height, 16);
+      ctx.fillStyle = fill;
+      ctx.fill();
+      ctx.strokeStyle = stroke;
+      ctx.lineWidth = 4;
+      ctx.stroke();
+      roundRectPath(ctx, page.x, page.y, page.width, barH, 16);
+      ctx.fillStyle = barFill;
+      ctx.fill();
+      ctx.fillRect(page.x, page.y + barH - 8, page.width, 10);
+      ctx.strokeStyle = 'rgba(26,21,16,0.2)';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(page.x + 56, page.y + barH / 2);
+      ctx.lineTo(page.x + 136, page.y + barH / 2);
+      ctx.stroke();
+      const dots = ['#FF5F57', '#FEBC2E', '#28C840'];
+      dots.forEach((c, i) => {
+        ctx.beginPath();
+        ctx.ellipse(page.x + page.width - 21 - i * 22, page.y + barH / 2, 7, 7, 0, 0, Math.PI * 2);
+        ctx.fillStyle = c;
+        ctx.fill();
+        ctx.strokeStyle = stroke;
+        ctx.lineWidth = 1.5;
+        ctx.stroke();
+      });
+      break;
+    }
+    default: {
+      const _e: never = page;
+      void _e;
+    }
+  }
+}
+
+/**
+ * Full-bleed journal shell: outer field (+ grid) + inner page chrome in ONE bitmap.
+ * Product model: replaceable「手账壳」— content/text/stickers sit on top.
+ */
+export function rasterJournalShell(
+  width: number,
+  height: number,
+  opts: { field: string; grid?: string; gridStep?: number; page?: JournalShellPage },
+): ImageData {
+  const w = Math.max(1, Math.round(width));
+  const h = Math.max(1, Math.round(height));
+  const canvas = document.createElement('canvas');
+  canvas.width = w;
+  canvas.height = h;
+  const ctx = canvas.getContext('2d')!;
+  paintField(ctx, w, h, opts.field, opts.grid, opts.gridStep);
+  if (opts.page) paintShellPage(ctx, opts.page);
+  return ctx.getImageData(0, 0, w, h);
+}
+
+export function rasterPastelField(
+  width: number,
+  height: number,
+  fill: string,
+  grid?: string,
+  gridStep = 48,
+): ImageData {
+  return rasterJournalShell(width, height, { field: fill, grid, gridStep });
+}
+
+/**
+ * One locked「手账壳」image — field + page are cohesive (swap as a unit later).
+ */
+export function makeJournalShell(
+  parentId: string,
+  assets: AssetStore,
+  opts: {
+    width: number;
+    height: number;
+    field: string;
+    grid?: string;
+    page?: JournalShellPage;
+    name?: string;
+  },
+): ImageNode {
+  const image = rasterJournalShell(opts.width, opts.height, {
+    field: opts.field,
+    grid: opts.grid,
+    page: opts.page,
+  });
+  return makeImageInRect(parentId, assets, image, 0, 0, opts.width, opts.height, {
+    name: opts.name ?? '\u624b\u8d26\u58f3',
+    locked: true,
+  });
+}
+
+/** @deprecated Prefer makeJournalShell — field-only shell without inner page. */
 export function makePastelField(
   parentId: string,
+  assets: AssetStore,
   opts: {
     x: number;
     y: number;
@@ -346,42 +618,23 @@ export function makePastelField(
     height: number;
     fill: string;
     grid?: string;
+    name?: string;
   },
-): SceneNode[] {
-  const nodes: SceneNode[] = [
-    makeVeil(parentId, {
-      x: opts.x,
-      y: opts.y,
+): ImageNode {
+  if (opts.x === 0 && opts.y === 0) {
+    return makeJournalShell(parentId, assets, {
       width: opts.width,
       height: opts.height,
-      fill: opts.fill,
-      name: '\u5e95\u573a',
-    }),
-  ];
-  if (opts.grid) {
-    const step = 48;
-    for (let x = opts.x; x < opts.x + opts.width; x += step) {
-      nodes.push(
-        makeLine(parentId, x, opts.y, 0, opts.height, {
-          stroke: opts.grid,
-          strokeWidth: 1,
-          name: '\u7f51\u683c\u7eb5',
-          locked: true,
-        }),
-      );
-    }
-    for (let y = opts.y; y < opts.y + opts.height; y += step) {
-      nodes.push(
-        makeLine(parentId, opts.x, y, opts.width, 0, {
-          stroke: opts.grid,
-          strokeWidth: 1,
-          name: '\u7f51\u683c\u6a2a',
-          locked: true,
-        }),
-      );
-    }
+      field: opts.fill,
+      grid: opts.grid,
+      name: opts.name ?? '\u624b\u8d26\u58f3',
+    });
   }
-  return nodes;
+  const image = rasterPastelField(opts.width, opts.height, opts.fill, opts.grid);
+  return makeImageInRect(parentId, assets, image, opts.x, opts.y, opts.width, opts.height, {
+    name: opts.name ?? '\u624b\u8d26\u58f3',
+    locked: true,
+  });
 }
 
 export function makeSpeechBubble(

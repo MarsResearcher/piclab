@@ -5,11 +5,29 @@
 import {
   createId,
   identityTransform,
+  isGroup,
   type InkNode,
+  type SceneNode,
   type ShapeNode,
+  type StudioDocument,
   type TextNode,
 } from '../model';
-import { makeLine, makeShape } from '../scenes/helpers';
+import { makeGroup, makeLine, makeShape } from '../scenes/helpers';
+
+/** Direct children of a parent among a flat node list (for group trees). */
+export function rootIdsOf(nodes: SceneNode[], parentId: string): string[] {
+  return nodes.filter((n) => n.parentId === parentId).map((n) => n.id);
+}
+
+/** Delete a node and nested group children from `doc.nodes`. */
+export function purgeNodeTree(doc: StudioDocument, id: string): void {
+  const node = doc.nodes[id];
+  if (!node) return;
+  if (isGroup(node)) {
+    for (const childId of node.children) purgeNodeTree(doc, childId);
+  }
+  delete doc.nodes[id];
+}
 
 /** Narrow a display text horizontally (condensed look via transform). */
 export function condenseText(node: TextNode, scaleX = 0.72): TextNode {
@@ -99,7 +117,10 @@ export function makeVeil(
   });
 }
 
-/** Horizontal ruled lines for memo / notebook feel. */
+/**
+ * Horizontal ruled lines as one locked「横线纸纹」group.
+ * Returns [group, ...lines] — attach only roots via `rootIdsOf`.
+ */
 export function makeRuledLines(
   parentId: string,
   opts: {
@@ -110,20 +131,28 @@ export function makeRuledLines(
     gap: number;
     stroke?: string;
     strokeWidth?: number;
+    name?: string;
+    opacity?: number;
   },
-): ShapeNode[] {
+): SceneNode[] {
   const stroke = opts.stroke ?? 'rgba(42,36,28,0.14)';
   const sw = opts.strokeWidth ?? 1.5;
-  const out: ShapeNode[] = [];
+  const group = makeGroup(parentId, [], {
+    name: opts.name ?? '\u6a2a\u7ebf\u7eb8\u7eb9',
+    locked: true,
+    opacity: opts.opacity,
+  });
+  const lines: ShapeNode[] = [];
   for (let i = 0; i < opts.count; i++) {
-    out.push(
-      makeLine(parentId, opts.x, opts.y0 + i * opts.gap, opts.width, 0, {
+    lines.push(
+      makeLine(group.id, opts.x, opts.y0 + i * opts.gap, opts.width, 0, {
         stroke,
         strokeWidth: sw,
-        name: `横线${i + 1}`,
+        name: `\u6a2a\u7ebf${i + 1}`,
         locked: true,
       }),
     );
   }
-  return out;
+  group.children = lines.map((n) => n.id);
+  return [group, ...lines];
 }
