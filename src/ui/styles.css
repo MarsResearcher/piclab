@@ -960,6 +960,12 @@
   background: color-mix(in srgb, var(--surface-2) 100%, transparent);
 }
 
+.lite-home-github-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
 .lite-home-title {
   margin: 0;
   font-family: var(--font-display);
