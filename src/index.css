@@ -1,0 +1,14 @@
+@import 'tailwindcss';
+
+/* Tailwind theme follows Atelier tokens in styles.css :root */
+@theme {
+  --color-studio-bg: var(--bg-0);
+  --color-studio-panel: var(--bg-1);
+  --color-studio-line: var(--line);
+  --color-studio-text: var(--text);
+  --color-studio-muted: var(--muted);
+  --color-studio-accent: var(--accent);
+  --color-studio-danger: var(--danger);
+  --font-mono: 'IBM Plex Mono', 'PingFang SC', 'Microsoft YaHei', ui-monospace, monospace;
+  --font-display: 'Syne', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+}
