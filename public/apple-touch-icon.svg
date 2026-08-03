@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" role="img" aria-label="PicLab">
+  <rect width="180" height="180" rx="40" fill="#0b0e11"/>
+  <rect x="14" y="14" width="152" height="152" rx="32" fill="#12161b" stroke="#1e252c" stroke-width="3"/>
+  <path
+    fill="none"
+    stroke="#34d3c0"
+    stroke-width="10"
+    stroke-linecap="square"
+    d="M50 72V48h24M106 48h24v24M130 108v24h-24M74 132H50v-24"
+  />
+  <rect x="78" y="78" width="24" height="24" rx="3" fill="#34d3c0"/>
+  <rect x="64" y="78" width="10" height="10" rx="2" fill="#34d3c0" opacity="0.45"/>
+  <rect x="106" y="92" width="10" height="10" rx="2" fill="#34d3c0" opacity="0.45"/>
+</svg>

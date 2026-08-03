@@ -1,0 +1,40 @@
+---
+name: Feature request
+description: Idea that fits offline-first PicLab Studio
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Vague brainstorms → [Discussions](https://github.com/MarsResearcher/piclab/discussions) first.
+        Scope: [`docs/PRODUCT.md`](https://github.com/MarsResearcher/piclab/blob/master/docs/PRODUCT.md).
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What user pain does this solve?
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Proposal
+    validations:
+      required: true
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternatives considered
+    validations:
+      required: false
+  - type: checkboxes
+    id: scope
+    attributes:
+      label: Scope check
+      options:
+        - label: Works offline / no required cloud account
+          required: true
+        - label: Fits Studio architecture (UI → store → engine)
+          required: true
+        - label: Aligns with PRODUCT.md beachhead (not an anti-job)
+          required: true
