@@ -27,6 +27,7 @@ import {
   resolveXhsTheme,
 } from '../templates';
 import { makeRuledLines, rootIdsOf } from '../templates/templateCraft';
+import { hasLucideIcon } from '../templates/stickerRaster';
 import { getNodeStrategy } from '../engine/nodeStrategies';
 import { assertProjectFolderFilters } from '../store/projectFolders.selftest';
 
@@ -112,11 +113,14 @@ export function runOfflineSmoke(): SmokeResult[] {
       (s) =>
         s.source &&
         (s.source.kind === 'lucide'
-          ? Boolean(s.source.icon)
+          ? Boolean(s.source.icon) && hasLucideIcon(s.source.icon)
           : s.source.kind === 'illustration' && Boolean(s.source.file)),
     );
     const lucideCount = STICKER_CATALOG.filter((s) => s.source.kind === 'lucide').length;
     const illustCount = STICKER_CATALOG.filter((s) => s.source.kind === 'illustration').length;
+    const missingLucide = STICKER_CATALOG.filter(
+      (s) => s.source.kind === 'lucide' && !hasLucideIcon(s.source.icon),
+    ).map((s) => s.source.kind === 'lucide' ? s.source.icon : '');
     const ruled = makeRuledLines('frame-smoke', {
       x: 0,
       y0: 0,
@@ -141,7 +145,7 @@ export function runOfflineSmoke(): SmokeResult[] {
         lucideCount >= 40 &&
         illustCount >= 6 &&
         ruledOk,
-      detail: `stickers=${STICKER_CATALOG.length} lucide=${lucideCount} illust=${illustCount} journal=${journal.length} ruledGroup=${ruledOk}`,
+      detail: `stickers=${STICKER_CATALOG.length} lucide=${lucideCount} illust=${illustCount} journal=${journal.length} ruledGroup=${ruledOk}${missingLucide.length ? ` missing=${missingLucide.join(',')}` : ''}`,
     });
   } catch (e) {
     results.push({

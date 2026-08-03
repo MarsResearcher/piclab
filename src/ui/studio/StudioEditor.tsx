@@ -777,8 +777,11 @@ export function StudioEditor({ onOpenLab, landing = 'home', onLandingChange }: P
         setTool('select');
         setAssetsOpen(false);
         setStatus(`\u8d34\u7eb8 \u00b7 ${id}`);
-      } catch {
-        setStatus('\u8d34\u7eb8\u63d2\u5165\u5931\u8d25');
+      } catch (err) {
+        console.warn('[sticker]', id, err);
+        setStatus(
+          `\u8d34\u7eb8\u63d2\u5165\u5931\u8d25\u00b7${err instanceof Error ? err.message : id}`,
+        );
       }
     },
     [addImageData],

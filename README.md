@@ -9,7 +9,7 @@
 
 <p align="center">
   <a href="https://marsresearcher.github.io/piclab/"><img src="https://img.shields.io/badge/demo-live-34d3c0?style=flat-square&logo=github" alt="Live demo" /></a>
-  <a href="https://github.com/MarsResearcher/piclab/releases/tag/v0.1.23"><img src="https://img.shields.io/badge/version-0.1.23-0b0e11?style=flat-square" alt="Version" /></a>
+  <a href="https://github.com/MarsResearcher/piclab/releases/tag/v0.1.24"><img src="https://img.shields.io/badge/version-0.1.24-0b0e11?style=flat-square" alt="Version" /></a>
   <a href="https://github.com/MarsResearcher/piclab/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/MarsResearcher/piclab/ci.yml?branch=master&style=flat-square&label=CI" alt="CI" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-1a2027?style=flat-square" alt="MIT" /></a>
   <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript" />
@@ -156,7 +156,7 @@ React 19 · TypeScript 5 · Vite 6 · Canvas 2D · IndexedDB · Web Workers (hea
 | Journal「手账壳」+ product consensus | Bilingual docs polish; curated good-first-issues |
 | Smoke + architecture docs | Good-first-issues from real creator bugs |
 
-See [`CHANGELOG.md`](CHANGELOG.md), [`docs/RELEASING.md`](docs/RELEASING.md), and [v0.1.23](https://github.com/MarsResearcher/piclab/releases/tag/v0.1.23).
+See [`CHANGELOG.md`](CHANGELOG.md), [`docs/RELEASING.md`](docs/RELEASING.md), and [v0.1.24](https://github.com/MarsResearcher/piclab/releases/tag/v0.1.24).
 
 ---
 

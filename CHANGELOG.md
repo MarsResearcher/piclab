@@ -5,6 +5,13 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.24] — 2026-08-03
+
+### Fixed
+
+- Stickers no longer fall back to blank colored circles — Lucide icons paint directly to canvas; illustration SVGs decode via `<img>` (Chromium `createImageBitmap(SVG)` was failing silently)
+- Inserted stickers / images land on the **top** of the layer stack (append), matching shapes and text
+
 ## [0.1.23] — 2026-08-03
 
 ### Added
@@ -58,7 +65,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Xiaohongshu specialty light chrome; Lucide + Open Doodles sticker pack
 - Journal atmosphere signatures and materials shelf
 
-[0.1.23]: https://github.com/MarsResearcher/piclab/releases/tag/v0.1.23
+[0.1.24]: https://github.com/MarsResearcher/piclab/releases/tag/v0.1.24
+[0.1.23]: https://github.com/MarsResearcher/piclab/compare/v0.1.23...v0.1.24
 [0.1.22]: https://github.com/MarsResearcher/piclab/compare/v0.1.22...v0.1.23
 [0.1.21]: https://github.com/MarsResearcher/piclab/compare/v0.1.21...v0.1.22
 [0.1.19]: https://github.com/MarsResearcher/piclab/compare/v0.1.19...v0.1.21

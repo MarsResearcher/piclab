@@ -675,7 +675,8 @@ export class DocStore {
       const f = d.nodes[frame.id];
       if (!f || !isFrame(f)) return;
       d.nodes[image.id] = image;
-      d.nodes[frame.id] = { ...f, children: [image.id, ...f.children] };
+      // Append = paint last = top of layer stack (matches shapes / text).
+      d.nodes[frame.id] = { ...f, children: [...f.children, image.id] };
       d.selection = [image.id];
     });
     return image;

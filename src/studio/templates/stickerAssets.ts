@@ -11,49 +11,29 @@ import { hasLucideIcon, rasterLucideIcon, rasterSvgUrl } from './stickerRaster';
 
 const mem = new Map<string, ImageData>();
 
-function proceduralSticker(id: string, size = 256): ImageData {
-  const canvas = document.createElement('canvas');
-  canvas.width = size;
-  canvas.height = size;
-  const ctx = canvas.getContext('2d')!;
-  const hue = (id.length * 47) % 360;
-  ctx.fillStyle = `hsl(${hue} 55% 72%)`;
-  ctx.beginPath();
-  ctx.arc(size / 2, size / 2, size * 0.38, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.strokeStyle = '#1A1510';
-  ctx.lineWidth = size * 0.04;
-  ctx.stroke();
-  return ctx.getImageData(0, 0, size, size);
-}
-
 export async function loadSticker(id: string): Promise<ImageData> {
   const hit = mem.get(id);
   if (hit) return hit;
   const meta = STICKER_BY_ID[id];
   if (!meta) throw new Error(`Unknown sticker: ${id}`);
 
-  try {
-    let data: ImageData;
-    const src = meta.source;
-    if (src.kind === 'lucide') {
-      if (!hasLucideIcon(src.icon)) throw new Error(`missing lucide ${src.icon}`);
-      data = await rasterLucideIcon(src.icon, {
-        size: 256,
-        color: src.color,
-        strokeWidth: src.strokeWidth,
-        pad: 8,
-      });
-    } else {
-      data = await rasterSvgUrl(publicUrl(`illustrations/${src.file}`), 360);
+  const src = meta.source;
+  let data: ImageData;
+  if (src.kind === 'lucide') {
+    if (!hasLucideIcon(src.icon)) {
+      throw new Error(`missing lucide ${src.icon}`);
     }
-    mem.set(id, data);
-    return data;
-  } catch {
-    const data = proceduralSticker(id);
-    mem.set(id, data);
-    return data;
+    data = await rasterLucideIcon(src.icon, {
+      size: 256,
+      color: src.color,
+      strokeWidth: src.strokeWidth,
+      pad: 8,
+    });
+  } else {
+    data = await rasterSvgUrl(publicUrl(`illustrations/${src.file}`), 360);
   }
+  mem.set(id, data);
+  return data;
 }
 
 export function clearStickerCache(): void {
