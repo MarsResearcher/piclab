@@ -1,53 +1,111 @@
-# PicLab
+# PicLab Studio
 
-浏览器里的数字图像暗房与设计工作台。**离线优先**：项目与模板保存在本机 IndexedDB，不是云端模板市场。
+[![Live Demo](https://img.shields.io/badge/demo-marsresearcher.github.io%2Fpiclab-34d3c0?style=flat-square&logo=github)](https://marsresearcher.github.io/piclab/)
+[![Version](https://img.shields.io/badge/version-0.1.21-blue?style=flat-square)](https://github.com/MarsResearcher/piclab)
+[![License: MIT](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Vite](https://img.shields.io/badge/Vite-6-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev/)
 
-## 快速开始
+**Offline-first** browser design bench & digital image darkroom — templates, projects, and library stay on your machine (IndexedDB), not in a cloud template marketplace.
+
+> 浏览器里的设计工作台与图像暗房。**离线优先**：项目 / 模板保存在本机，可随时打开 [在线演示](https://marsresearcher.github.io/piclab/)。
+
+---
+
+## Why PicLab?
+
+| | |
+| --- | --- |
+| **Studio first** | Lite Home → editor for Xiaohongshu notes, posters, cards, print grids |
+| **Offline by design** | Autosave projects & user templates in IndexedDB |
+| **Composable templates** | Built-in seeds + scene generators + “save as my template” |
+| **Lab (Pro+)** | Optional reversible image experiments (FFT, glitch, convolution, …) |
+
+## Live demo
+
+**→ [https://marsresearcher.github.io/piclab/](https://marsresearcher.github.io/piclab/)**
+
+Open in a modern Chromium / Firefox / Safari. No account required.
+
+## Quick start
 
 ```bash
+git clone https://github.com/MarsResearcher/piclab.git
+cd piclab
 npm install
 npm run dev
 ```
 
-默认进入 **PicLab Studio** Lite Home：最近项目、三层模板入口。顶栏「主页」可随时返回；上次若停留在编辑器，下次会记住并直接恢复。
+You should land on **PicLab Studio** Lite Home (recent projects + template shelves). Use the top-bar **主页** to return anytime.
 
-## PicLab Studio
-
-| 层级 | 说明 |
-|------|------|
-| **L1 内置模板** | 仓库内可分解种子（分组、形状、文字原子），见 `src/studio/templates/builtins.ts` |
-| **L2 场景生成器** | 参数化画布（名片 / 海报 / 广告等），见 `src/studio/scenes/` |
-| **L3 我的模板** | 编辑器顶栏「另存为模板」→ `templateStore`（IndexedDB） |
-
-架构：`model/` · `store/` · `engine/` · `plugins/` · `scenes/` · `templates/` · `export/` — UI 在 `src/ui/studio/`，只通过 store 读写文档。
-
-打印场景（离线几何生成）：田字格 / 拼音格 / 书法竖格·米字格（A4）。导出支持当前面 PNG、全部面 ZIP、多页 PDF（含可选出血）。
+### Verify it works
 
 ```bash
-npm run smoke   # 断网关键路径冒烟（场景工厂 + 内置模板）
+npm run smoke    # offline critical path (scenes + builtins)
+npm run build    # typecheck + production bundle
 ```
 
-## Lab（Pro+）
+## Features
 
-`App` 中可进入 **LabApp**：可逆图像实验场。新增实验在 `src/experiments/` 注册到 `experimentRegistry`。
+- **L1 built-in templates** — decomposable seeds (groups, shapes, type) in `src/studio/templates/`
+- **L2 scene generators** — parameterized canvases (card / poster / ad / social / WeChat / XHS / print grids)
+- **L3 my templates** — “另存为模板” → local `templateStore`
+- **Export** — current page PNG, multi-page ZIP, PDF (optional bleed)
+- **Print scenes** — 田字格 / 拼音格 / 书法格 (A4), offline geometry
+- **Stock + stickers** — bundled template photos & Lucide / Open Doodles chrome
 
-### 新增实验
+## Architecture (short)
 
-1. 复制 `src/experiments/template.ts`
-2. 实现 `id / name / params / apply(imageData, params)`
-3. 在 `src/core/experimentRegistry.ts` 的 `experimentLoaders` 中注册
+```
+model/ → store/ → engine/ → plugins/ → scenes/ + templates/ → export/
+UI: src/ui/studio/  (talks to stores only — never raw pixels)
+```
 
-### 内置实验
+More detail: [`src/studio/ARCHITECTURE.md`](src/studio/ARCHITECTURE.md).
 
-| 实验 | 说明 |
-|------|------|
-| 通道交换 | RGB/HSV 通道任意重映射 |
-| 自定义卷积 | 可编辑卷积核 + 预设 |
-| 像素排序 | 阈值区间内的 glitch 排序 |
-| 频域滤波 | FFT 低通/高通/带通/带阻，附频谱图 |
+## Lab (Pro+)
 
-## 技术栈
+Optional playground behind Studio. Add an experiment:
 
-- **Canvas 2D** — Studio 主画布与 Lab 预览
-- **IndexedDB** — 多项目 + 用户模板持久化
-- **Web Workers** — 卷积 / FFT 等重计算预留
+1. Copy `src/experiments/template.ts`
+2. Implement `id / name / params / apply(imageData, params)`
+3. Register in `src/core/experimentRegistry.ts`
+
+Built-ins include channel remap, custom convolution, pixel sort, FFT filters.
+
+## Tech stack
+
+- **React + TypeScript + Vite**
+- **Canvas 2D** — Studio canvas & Lab preview
+- **IndexedDB** — multi-project + user templates
+- **Web Workers** — reserved for heavy ops (convolution / FFT)
+
+## Contributing
+
+See [`CONTRIBUTING.md`](CONTRIBUTING.md). Bug / feature templates live under `.github/ISSUE_TEMPLATE/`.
+
+Security reports: [`SECURITY.md`](SECURITY.md) — please do **not** file public issues for vulnerabilities.
+
+## License
+
+[MIT](LICENSE) © 2026 MarsResearcher / PicLab contributors.
+
+Bundled fonts and illustrations keep their own licenses — see `public/**/CREDITS.md` and `public/fonts/OFL-NOTICE.txt`.
+
+## Roadmap (signals we care about)
+
+Inspired by common OSS health checklists ([Shields](https://shields.io/), README launch checks, maintainer readiness):
+
+| Area | Status / next |
+| --- | --- |
+| README + demo + license | Done |
+| Issue / PR templates | Done |
+| Contributing + security policy | Done |
+| CI badge (Actions smoke/build) | Planned when `workflow` push scope is available |
+| Changelog / tagged releases | Planned |
+| Screenshot / short GIF in README | Welcome as a PR |
+| Code of conduct | Add when community grows |
+
+---
+
+English-first sections above; UI copy is primarily Chinese. PRs improving bilingual docs are welcome.
