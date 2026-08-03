@@ -50,6 +50,7 @@ npm run build
 
 | Doc | Purpose |
 | --- | --- |
+| [`docs/PRODUCT.md`](docs/PRODUCT.md) | Beachhead, JTBD, love/hate, priorities |
 | [`docs/getting-started.md`](docs/getting-started.md) | Product path + where to change code |
 | [`src/studio/ARCHITECTURE.md`](src/studio/ARCHITECTURE.md) | Layer boundaries |
 | [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) | Community standards |

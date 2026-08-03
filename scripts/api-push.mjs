@@ -49,7 +49,9 @@ function listFiles() {
     .toString('utf8')
     .split('\0')
     .filter(Boolean)
-    .filter((p) => !p.startsWith('.github/workflows/'));
+    .filter((p) => !p.startsWith('.github/workflows/'))
+    .filter((p) => !p.endsWith('.bak'))
+    .filter((p) => !p.startsWith('.cursor/'));
 }
 
 async function createBlob(path) {
@@ -87,7 +89,10 @@ async function main() {
     tree: tree.map(({ path, mode, type, sha }) => ({ path, mode, type, sha })),
   });
 
-  const message = execSync('git log -1 --pretty=%B', { encoding: 'utf8' }).trim() || 'Initial import';
+  const message =
+    process.env.PUSH_MESSAGE?.trim() ||
+    execSync('git log -1 --pretty=%B', { encoding: 'utf8' }).trim() ||
+    'Update';
   console.log('Creating commit…');
   const commit = await api('POST', `/repos/${OWNER}/${REPO}/git/commits`, {
     message,

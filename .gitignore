@@ -4,6 +4,7 @@ dist
 *.local
 .env
 .env.*
+*.bak
 .vscode/*
 !.vscode/extensions.json
 .cursor/

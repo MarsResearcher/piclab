@@ -63,6 +63,7 @@ Deeper layering: [`src/studio/ARCHITECTURE.md`](../src/studio/ARCHITECTURE.md).
 
 ## Need help?
 
+- Product direction: [`PRODUCT.md`](PRODUCT.md)
 - Bugs / features: [issue templates](https://github.com/MarsResearcher/piclab/issues/new/choose)
 - Security: [`SECURITY.md`](../SECURITY.md)
 - Conduct: [`CODE_OF_CONDUCT.md`](../CODE_OF_CONDUCT.md)

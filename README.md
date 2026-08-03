@@ -129,6 +129,8 @@ React 19 · TypeScript 5 · Vite 6 · Canvas 2D · IndexedDB · Web Workers (hea
 
 Read [`CONTRIBUTING.md`](CONTRIBUTING.md) and [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md).
 
+Product direction: [`docs/PRODUCT.md`](docs/PRODUCT.md).
+
 - Prefer small, reviewable PRs
 - UI changes: include a screenshot or short clip
 - Keep offline-first — no required cloud backend for core Studio
@@ -143,6 +145,7 @@ Security: [`SECURITY.md`](SECURITY.md) — **do not** file public issues for vul
 | --- | --- |
 | Public demo + MIT + releases | Green CI badge (needs `workflow` OAuth push) |
 | Journal「手账壳」+ project covers | Short product GIF / motion tour |
+| Product consensus (`docs/PRODUCT.md`) | Learn from real Xiaohongshu creator usage |
 | Smoke + architecture docs | Bilingual docs polish; good-first-issues |
 | Contributor Covenant | Community growth → more governance as needed |
 
