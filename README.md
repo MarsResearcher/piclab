@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/brand/banner.svg" alt="PicLab Studio — offline design bench" width="100%" />
+  <img src="docs/brand/banner.png" alt="PicLab Studio — offline design bench" width="100%" />
 </p>
 
 <p align="center">
@@ -8,22 +8,17 @@
 </p>
 
 <p align="center">
-  <a href="https://marsresearcher.github.io/piclab/"><img src="https://img.shields.io/badge/Live_Demo-open-34d3c0?style=for-the-badge&logo=github" alt="Live Demo" /></a>
-  &nbsp;
-  <a href="https://github.com/MarsResearcher/piclab/releases/tag/v0.1.21"><img src="https://img.shields.io/badge/version-0.1.21-0b0e11?style=for-the-badge" alt="Version" /></a>
-  &nbsp;
-  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-1a2027?style=for-the-badge" alt="MIT" /></a>
+  <a href="https://marsresearcher.github.io/piclab/"><img src="https://img.shields.io/badge/demo-live-34d3c0?style=flat-square&logo=github" alt="Live demo" /></a>
+  <a href="https://github.com/MarsResearcher/piclab/releases/tag/v0.1.21"><img src="https://img.shields.io/badge/version-0.1.21-0b0e11?style=flat-square" alt="Version" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-1a2027?style=flat-square" alt="MIT" /></a>
+  <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript" />
+  <img src="https://img.shields.io/badge/Vite-6-646CFF?style=flat-square&logo=vite&logoColor=white" alt="Vite" />
+  <img src="https://img.shields.io/badge/storage-IndexedDB-6b7280?style=flat-square" alt="IndexedDB" />
 </p>
 
 <p align="center">
-  <a href="https://github.com/MarsResearcher/piclab/actions/workflows/ci.yml"><img src="https://github.com/MarsResearcher/piclab/actions/workflows/ci.yml/badge.svg" alt="CI" /></a>
-  <img src="https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white" alt="TypeScript" />
-  <img src="https://img.shields.io/badge/Vite-6-646CFF?logo=vite&logoColor=white" alt="Vite" />
-  <img src="https://img.shields.io/badge/platform-browser-34d3c0" alt="Browser" />
-  <img src="https://img.shields.io/badge/storage-IndexedDB-9aa7b2" alt="IndexedDB" />
+  浏览器里的设计工作台与图像暗房 · <strong>离线优先</strong> · 打开 <a href="https://marsresearcher.github.io/piclab/">在线演示</a> 即可用，无需账号
 </p>
-
-> 浏览器里的设计工作台与图像暗房。**离线优先**：打开 [在线演示](https://marsresearcher.github.io/piclab/) 即可用，无需账号。
 
 ---
 
@@ -60,17 +55,19 @@ Full walkthrough: [`docs/getting-started.md`](docs/getting-started.md).
 
 ## Product tour
 
-| Lite Home — find work | Studio — edit |
-| --- | --- |
-| ![Lite Home template shelves](docs/screenshots/lite-home.jpg) | ![Studio editor canvas](docs/screenshots/studio-editor.jpg) |
+**Studio** — edit on canvas, export when ready.
 
-| Template preview | Projects with real covers |
-| --- | --- |
-| ![Signature template preview](docs/screenshots/template-preview.jpg) | ![Project covers on home](docs/screenshots/project-covers.jpg) |
+<p align="center">
+  <img src="docs/screenshots/studio-editor.jpg" alt="PicLab Studio editor" width="100%" />
+</p>
 
-| Journal chrome | |
-| --- | --- |
-| ![Xiaohongshu journal shell preview](docs/screenshots/journal-preview.jpg) | Preview → **使用此模板** → edit → **导出** PNG / ZIP / PDF |
+**Lite Home** finds work · **Preview** before you commit.
+
+| Find a template | Preview, then use |
+| :---: | :---: |
+| <img src="docs/screenshots/lite-home.jpg" alt="Lite Home template shelves" width="100%" /> | <img src="docs/screenshots/template-preview.jpg" alt="Template preview" width="100%" /> |
+
+Flow: preview → **使用此模板** → edit → **导出** PNG / ZIP / PDF.
 
 ---
 
