@@ -33,6 +33,7 @@ import {
   makeTornBand,
   makeVideoChrome,
 } from './xhsComposition';
+import { XHS_JOURNAL_SIGNATURES } from './xhsJournalSignatures';
 
 export type XhsSignatureCategory =
   | 'plog'
@@ -901,6 +902,7 @@ const sigPromoPrice: BuiltinTemplate = {
 };
 
 export const XHS_SIGNATURE_BUILTINS: BuiltinTemplate[] = [
+  ...XHS_JOURNAL_SIGNATURES,
   sigPlogTriptych,
   sigVibeScriptOcean,
   sigTypeCollisionField,

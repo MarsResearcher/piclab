@@ -18,6 +18,7 @@ import { runTransformInvariantChecks } from '../engine/transformInvariants';
 import { getScene, listScenes, registerBuiltinTools } from '../plugins/host';
 import { listBuiltinTemplates } from '../templates';
 import {
+  STICKER_CATALOG,
   XHS_CARD_TYPES,
   applyXhsTheme,
   buildXhsCardDocument,
@@ -100,10 +101,16 @@ export function runOfflineSmoke(): SmokeResult[] {
       ok: wechat.length >= 3 && xhsCards.length >= 12 && xhsSuites.length >= 2,
       detail: `wechat=${wechat.length} xhsCards=${xhsCards.length} xhsSuites=${xhsSuites.length} xhs=${xhs.length}`,
     });
+    const journal = xhs.filter((t) => t.tags?.includes('手账'));
     results.push({
       name: 'xhs-signatures',
       ok: xhsSigs.length >= 12 && catsOk && dryGoods.length >= 12,
       detail: `sigs=${xhsSigs.length} catsOk=${catsOk} dryGoods=${dryGoods.length}`,
+    });
+    results.push({
+      name: 'xhs-atmosphere',
+      ok: STICKER_CATALOG.length >= 40 && journal.length >= 6,
+      detail: `stickers=${STICKER_CATALOG.length} journal=${journal.length}`,
     });
   } catch (e) {
     results.push({

@@ -295,7 +295,77 @@
 }
 
 .assets-pop {
-  width: 280px;
+  width: 300px;
+  max-height: min(72vh, 640px);
+  overflow: auto;
+}
+
+.sticker-strip {
+  margin-top: 4px;
+}
+
+.sticker-strip-head {
+  font-size: 12px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--text-secondary, #666);
+}
+
+.sticker-tag-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 8px;
+}
+
+.sticker-tag {
+  border: 1px solid var(--border-default, #ddd);
+  background: var(--surface-1, #fff);
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 11px;
+  cursor: pointer;
+  color: var(--text-secondary, #555);
+}
+
+.sticker-tag.active {
+  background: var(--text-primary, #1a1510);
+  color: #fff;
+  border-color: transparent;
+}
+
+.sticker-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.sticker-cell {
+  aspect-ratio: 1;
+  border: 1px solid var(--border-default, #e5e5e5);
+  border-radius: 8px;
+  background: #fff;
+  padding: 4px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sticker-cell:hover {
+  border-color: var(--text-primary, #1a1510);
+}
+
+.sticker-cell img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.sticker-strip-hint {
+  margin: 8px 0 0;
+  font-size: 11px;
+  color: var(--text-tertiary, #888);
 }
 
 .asset-pop-actions {

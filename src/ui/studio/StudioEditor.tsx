@@ -66,6 +66,8 @@ import {
   generateQrImageData,
   type QrLiteParams,
 } from '../../studio/plugins/liteTools';
+import { loadSticker } from '../../studio/templates/stickerAssets';
+import { STICKER_BY_ID } from '../../studio/templates/stickerCatalog';
 import { useStudioCanvasInteraction, type View } from './hooks/useStudioCanvasInteraction';
 import { useStudioProjectSession } from './hooks/useStudioProjectSession';
 import { STATUS, UI } from './uiLabels';
@@ -750,6 +752,37 @@ export function StudioEditor({ onOpenLab, landing = 'home', onLandingChange }: P
     }
   };
 
+  const insertSticker = useCallback(
+    async (id: string) => {
+      try {
+        const meta = STICKER_BY_ID[id];
+        const data = await loadSticker(id);
+        const targetW = (meta?.defaultW ?? 80) * 1.6;
+        const scale = targetW / Math.max(1, data.width);
+        const w = Math.round(data.width * scale);
+        const h = Math.round(data.height * scale);
+        // Re-raster at display size so addImageFromAsset keeps sticker small
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d')!;
+        const tmp = document.createElement('canvas');
+        tmp.width = data.width;
+        tmp.height = data.height;
+        tmp.getContext('2d')!.putImageData(data, 0, 0);
+        ctx.drawImage(tmp, 0, 0, w, h);
+        const scaled = ctx.getImageData(0, 0, w, h);
+        await addImageData(scaled, `\u8d34\u7eb8:${id}`);
+        setTool('select');
+        setAssetsOpen(false);
+        setStatus(`\u8d34\u7eb8 \u00b7 ${id}`);
+      } catch {
+        setStatus('\u8d34\u7eb8\u63d2\u5165\u5931\u8d25');
+      }
+    },
+    [addImageData],
+  );
+
   const ensureTextGesture = () => {
     if (!propsGestureRef.current) {
       storeRef.current.beginGesture();
@@ -906,6 +939,7 @@ export function StudioEditor({ onOpenLab, landing = 'home', onLandingChange }: P
           onImportFile={(f) => void importBlob(f, f.name)}
           onLoadSample={() => void loadSample()}
           onPickSample={(blob, name, id) => void importBlob(blob, name, id)}
+          onInsertSticker={(id) => void insertSticker(id)}
         />
 
         {layersOpen && (

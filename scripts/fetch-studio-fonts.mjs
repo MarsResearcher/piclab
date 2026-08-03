@@ -86,6 +86,18 @@ const FONTS = [
     family: 'Instrument Serif',
     note: 'contemporary serif',
   },
+  {
+    file: 'latin/Caveat-Regular.ttf',
+    url: 'https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/caveat/Caveat%5Bwght%5D.ttf',
+    family: 'Caveat',
+    note: 'handwritten journal latin (variable)',
+  },
+  {
+    file: 'latin/PatrickHand-Regular.ttf',
+    url: 'https://cdn.jsdelivr.net/gh/google/fonts@main/ofl/patrickhand/PatrickHand-Regular.ttf',
+    family: 'Patrick Hand',
+    note: 'friendly handwriting',
+  },
 ];
 
 async function download(file, url) {

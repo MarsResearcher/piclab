@@ -38,5 +38,7 @@ Re-fetch / sync: `node scripts/fetch-studio-fonts.mjs`
 | `latin/LibreBaskerville-400.woff2` | Libre Baskerville | 报刊 |
 | `latin/Outfit-*.woff2` | Outfit | 现代圆角 |
 | `latin/InstrumentSerif-400.woff2` | Instrument Serif | 当代编辑 |
+| `latin/Caveat-Regular.ttf` | Caveat | 手账手写西文 |
+| `latin/PatrickHand-Regular.ttf` | Patrick Hand | 便签手写 |
 
 See `OFL-NOTICE.txt` in this folder.

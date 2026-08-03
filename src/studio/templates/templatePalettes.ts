@@ -204,6 +204,12 @@ export const FONT_LATIN_ENGRAVED =
 /** CJK display round (站酷快乐 / 黄油). */
 export const FONT_YUAN =
   '"ZCOOL KuaiLe", "ZCOOL QingKe HuangYou", "YouYuan", "PingFang SC", sans-serif';
+/** Journal messy hand (刘建毛草) — scrapbook titles. */
+export const FONT_HAND =
+  '"Liu Jian Mao Cao", "Zhi Mang Xing", "ZCOOL KuaiLe", "KaiTi", cursive';
+/** Latin marker / wishlist accents (Caveat). */
+export const FONT_MARKER =
+  '"Caveat", "Patrick Hand", "Segoe Print", "ZCOOL KuaiLe", cursive';
 /** Xingkai / running script. */
 export const FONT_XING =
   '"Zhi Mang Xing", "Long Cang", "STXingkai", "KaiTi", serif';

@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" fill="none">
+<rect x="28" y="52" width="72" height="56" rx="6" fill="#F4A7B9" stroke="#1A1510" stroke-width="3.5"/><rect x="24" y="40" width="80" height="20" rx="4" fill="#E85D4C" stroke="#1A1510" stroke-width="3"/><path d="M64 40 V108 M24 62 H104" stroke="#FFE566" stroke-width="6"/><path d="M64 40 Q48 20 36 36 Q52 40 64 40 Q80 20 92 36 Q76 40 64 40" fill="#FFE566" stroke="#1A1510" stroke-width="2.5"/>
+</svg>

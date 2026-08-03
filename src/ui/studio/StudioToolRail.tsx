@@ -20,6 +20,7 @@ import {
 import type { InkBrush, ShapeKind } from '../../studio';
 import type { QrLiteParams } from '../../studio/plugins/liteTools';
 import { SampleStrip } from './SampleStrip';
+import { StickerStrip } from './StickerStrip';
 import { LiteToolsPopover } from './LiteToolsPopover';
 import { IconBtn } from './IconBtn';
 import { UI } from './uiLabels';
@@ -56,6 +57,7 @@ type Props = {
   onImportFile: (file: File) => void;
   onLoadSample: () => void;
   onPickSample: (blob: Blob, name: string, id: string) => void;
+  onInsertSticker: (id: string) => void;
   onBakeInk?: () => void;
 };
 
@@ -104,6 +106,7 @@ export function StudioToolRail({
   onImportFile,
   onLoadSample,
   onPickSample,
+  onInsertSticker,
   onBakeInk,
 }: Props) {
   return (
@@ -257,6 +260,8 @@ export function StudioToolRail({
               </button>
             </div>
             <SampleStrip refreshKey={stripKey} onPick={onPickSample} />
+            <div className="shape-pop-divider" />
+            <StickerStrip onPick={onInsertSticker} />
           </div>
         )}
       </div>

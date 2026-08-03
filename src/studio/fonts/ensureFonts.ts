@@ -25,6 +25,8 @@ export const BUNDLED_FONT_FAMILIES = [
   'Libre Baskerville',
   'Outfit',
   'Instrument Serif',
+  'Caveat',
+  'Patrick Hand',
 ] as const;
 
 /**

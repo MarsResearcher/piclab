@@ -62,6 +62,15 @@ export {
   type XhsCardTypeId,
   type XhsCardTypeMeta,
 } from './xhsCardTypes';
+export {
+  STICKER_CATALOG,
+  STICKER_BY_ID,
+  listStickersByTag,
+  type StickerItem,
+  type StickerTag,
+  type StickerId,
+} from './stickerCatalog';
+export { loadSticker, placeSticker, scatterStickers, listStickerIds } from './stickerAssets';
 export { remapDocumentIds } from './remap';
 export {
   getBuiltinPreviewThumb,
