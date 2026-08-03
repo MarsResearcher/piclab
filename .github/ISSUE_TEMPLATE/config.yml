@@ -1,0 +1,11 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Questions & ideas (Discussions)
+    url: https://github.com/MarsResearcher/piclab/discussions
+    about: Usage questions, brainstorming, and early ideas — keep Issues for actionable bugs/features.
+  - name: Live demo
+    url: https://marsresearcher.github.io/piclab/
+    about: Try PicLab in the browser — offline-first, no signup.
+  - name: Product scope
+    url: https://github.com/MarsResearcher/piclab/blob/master/docs/PRODUCT.md
+    about: Beachhead, JTBD, and what we deliberately do not build.
