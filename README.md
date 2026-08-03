@@ -61,6 +61,12 @@ Full walkthrough: [`docs/getting-started.md`](docs/getting-started.md).
   <img src="docs/screenshots/studio-editor.jpg" alt="PicLab Studio editor" width="100%" />
 </p>
 
+**Xiaohongshu in edit mode** — journal shell + theme controls (beachhead scene).
+
+<p align="center">
+  <img src="docs/screenshots/xhs-editor.jpg" alt="Xiaohongshu journal template in Studio editor" width="100%" />
+</p>
+
 **Lite Home** finds work · **Preview** before you commit.
 
 | Find a template | Preview, then use |
