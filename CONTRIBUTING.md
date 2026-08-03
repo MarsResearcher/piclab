@@ -46,6 +46,15 @@ npm run build
 - Screenshots or short clips help for UI changes.
 - Do not commit secrets (`.env`, API keys).
 
+## Docs map
+
+| Doc | Purpose |
+| --- | --- |
+| [`docs/getting-started.md`](docs/getting-started.md) | Product path + where to change code |
+| [`src/studio/ARCHITECTURE.md`](src/studio/ARCHITECTURE.md) | Layer boundaries |
+| [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) | Community standards |
+| [`SECURITY.md`](SECURITY.md) | Vulnerability reports |
+
 ## Code of collaboration
 
-Be respectful. Assume good intent. If something is unclear, ask in the issue/PR before large rewrites.
+This project follows the [Contributor Covenant](CODE_OF_CONDUCT.md). Be respectful. Assume good intent. If something is unclear, ask in the issue/PR before large rewrites.

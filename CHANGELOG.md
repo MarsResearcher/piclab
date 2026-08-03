@@ -10,9 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - GitHub Pages demo at https://marsresearcher.github.io/piclab/
-- PicLab brand favicon / apple-touch icon
-- MIT license, CONTRIBUTING, SECURITY, issue & PR templates
-- CI workflow (`smoke` + `build`) and README demo screenshot
+- PicLab brand favicon / apple-touch icon + README brand banner
+- Product-grade README tour (home / editor / preview / journal shots)
+- MIT license, CONTRIBUTING, SECURITY, CODE_OF_CONDUCT, getting-started
+- Issue & PR templates; CI workflow (`smoke` + `build`)
 - Project home-card covers (raster thumbs instead of letter placeholders)
 - Journal「手账壳」cohesive backdrop baking for Xiaohongshu templates
 
