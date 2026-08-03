@@ -5,6 +5,20 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.22] — 2026-08-03
+
+### Added
+
+- `SUPPORT.md` — Discussions vs Issues vs Security channel map
+- Issue forms (YAML) + contact links (no blank issues)
+- Dependabot (npm weekly, Actions monthly) and `CODEOWNERS`
+- `RELEASING.md` — solo-maintainer cut checklist
+
+### Changed
+
+- README / CONTRIBUTING / getting-started point to Discussions for Q&A
+- Clarified Lab as a free playground (no Pro+ / paid-tier branding)
+
 ## [0.1.21] — 2026-08-03
 
 ### Added
@@ -33,5 +47,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Xiaohongshu specialty light chrome; Lucide + Open Doodles sticker pack
 - Journal atmosphere signatures and materials shelf
 
-[0.1.21]: https://github.com/MarsResearcher/piclab/releases/tag/v0.1.21
+[0.1.22]: https://github.com/MarsResearcher/piclab/releases/tag/v0.1.22
+[0.1.21]: https://github.com/MarsResearcher/piclab/compare/v0.1.21...v0.1.22
 [0.1.19]: https://github.com/MarsResearcher/piclab/compare/v0.1.19...v0.1.21

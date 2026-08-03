@@ -58,6 +58,7 @@ npm run build
 | [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) | Community standards |
 | [`SECURITY.md`](SECURITY.md) | Vulnerability reports |
 | [`CHANGELOG.md`](CHANGELOG.md) | User-facing release notes |
+| [`RELEASING.md`](RELEASING.md) | How maintainers cut a version |
 
 ## Code of collaboration
 

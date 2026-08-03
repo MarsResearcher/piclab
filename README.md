@@ -9,7 +9,8 @@
 
 <p align="center">
   <a href="https://marsresearcher.github.io/piclab/"><img src="https://img.shields.io/badge/demo-live-34d3c0?style=flat-square&logo=github" alt="Live demo" /></a>
-  <a href="https://github.com/MarsResearcher/piclab/releases/tag/v0.1.21"><img src="https://img.shields.io/badge/version-0.1.21-0b0e11?style=flat-square" alt="Version" /></a>
+  <a href="https://github.com/MarsResearcher/piclab/releases/tag/v0.1.22"><img src="https://img.shields.io/badge/version-0.1.22-0b0e11?style=flat-square" alt="Version" /></a>
+  <a href="https://github.com/MarsResearcher/piclab/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/MarsResearcher/piclab/ci.yml?branch=master&style=flat-square&label=CI" alt="CI" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-1a2027?style=flat-square" alt="MIT" /></a>
   <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript" />
   <img src="https://img.shields.io/badge/Vite-6-646CFF?style=flat-square&logo=vite&logoColor=white" alt="Vite" />
@@ -149,12 +150,12 @@ React 19 · TypeScript 5 · Vite 6 · Canvas 2D · IndexedDB · Web Workers (hea
 
 | Now | Next |
 | --- | --- |
-| Public demo + MIT + releases | Green CI on GitHub Actions (needs `workflow` OAuth push) |
-| Support channels + Dependabot | Short product GIF / motion tour |
-| Journal「手账壳」+ product consensus | Learn from real Xiaohongshu creator usage |
-| Smoke + architecture docs | Bilingual docs polish; curated good-first-issues |
+| Support channels + Discussions + Dependabot | Short product GIF / motion tour |
+| Issue forms + RELEASING.md + CI workflows | Learn from real Xiaohongshu creator usage |
+| Journal「手账壳」+ product consensus | Bilingual docs polish; curated good-first-issues |
+| Smoke + architecture docs | Good-first-issues from real creator bugs |
 
-See [`CHANGELOG.md`](CHANGELOG.md) and [v0.1.21](https://github.com/MarsResearcher/piclab/releases/tag/v0.1.21).
+See [`CHANGELOG.md`](CHANGELOG.md), [`RELEASING.md`](RELEASING.md), and [v0.1.22](https://github.com/MarsResearcher/piclab/releases/tag/v0.1.22).
 
 ---
 

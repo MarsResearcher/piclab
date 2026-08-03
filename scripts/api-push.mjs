@@ -1,6 +1,7 @@
 /**
  * Push current git HEAD to GitHub via REST Git Data API (api.github.com).
- * Skips .github/workflows/* (requires workflow OAuth scope).
+ * By default skips .github/workflows/* (requires `workflow` OAuth scope).
+ * Set INCLUDE_WORKFLOWS=1 to upload Actions workflows too.
  *
  * Usage: node scripts/api-push.mjs [branch]
  */
@@ -49,7 +50,12 @@ function listFiles() {
     .toString('utf8')
     .split('\0')
     .filter(Boolean)
-    .filter((p) => !p.startsWith('.github/workflows/'))
+    .filter((p) => {
+      if (p.startsWith('.github/workflows/')) {
+        return process.env.INCLUDE_WORKFLOWS === '1';
+      }
+      return true;
+    })
     .filter((p) => !p.endsWith('.bak'))
     .filter((p) => !p.startsWith('.cursor/'));
 }
