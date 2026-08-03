@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { Github } from 'lucide-react';
 import {
   createFolder,
   deleteFolder,
@@ -24,6 +25,7 @@ import {
   type UserTemplateMeta,
 } from '../../studio';
 import { listLibrary, type LibraryItem } from '../../core/library';
+import { REPO_URL } from '../../appMeta';
 import { Button } from '@/components/ui/button';
 import { useGridAwarePick, type TemplatePickHandler } from './gridAwarePick';
 import {
@@ -979,14 +981,26 @@ export function LiteHome({ onPick, onOpenProject, onContinue, recentLimit = 8 }:
             <h1 className="lite-home-title">PicLab Studio</h1>
             <p className="lite-home-tagline">离线优先 · 模板 · 项目 · 图库一体</p>
           </div>
-          {latest && onContinue && (
-            <Button type="button" className="lite-continue-btn" onClick={onContinue}>
-              <span className="lite-continue-main">
-                继续编辑 · {displayProjectTitle(latest.name, latest.sceneId)}
-              </span>
-              <span className="lite-continue-meta">{formatProjectWhen(latest.updatedAt)}</span>
-            </Button>
-          )}
+          <div className="lite-home-actions">
+            <a
+              className="lite-home-github"
+              href={REPO_URL}
+              target="_blank"
+              rel="noopener noreferrer"
+              title="在 GitHub 查看源码"
+            >
+              <Github aria-hidden size={16} strokeWidth={1.75} />
+              <span>GitHub</span>
+            </a>
+            {latest && onContinue && (
+              <Button type="button" className="lite-continue-btn" onClick={onContinue}>
+                <span className="lite-continue-main">
+                  继续编辑 · {displayProjectTitle(latest.name, latest.sceneId)}
+                </span>
+                <span className="lite-continue-meta">{formatProjectWhen(latest.updatedAt)}</span>
+              </Button>
+            )}
+          </div>
         </header>
 
         <div className="hub-toolbar glass">
