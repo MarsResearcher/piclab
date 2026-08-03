@@ -23,6 +23,7 @@ Ship a release when users can **feel** a change: demo behavior, templates, expor
 
 ## Notes
 
+- Branch policy: [`BRANCHING.md`](BRANCHING.md) — `master` is protected; `v*` tags are ruleset-protected.
 - CI (when Actions workflows are on the remote) should stay green on `master` before tagging.
 - Security fixes: follow [`SECURITY.md`](SECURITY.md); prefer a patch release.
 - Do not announce paid tiers or “Pro+” — Lab is a free playground in the same app.

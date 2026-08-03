@@ -43,6 +43,7 @@ npm run build
 
 ## Pull requests
 
+- Target **`master`**. See [`BRANCHING.md`](BRANCHING.md).
 - Describe **why** and how you verified (`npm run smoke` / manual steps).
 - Screenshots or short clips help for UI changes.
 - Do not commit secrets (`.env`, API keys).
@@ -59,6 +60,7 @@ npm run build
 | [`SECURITY.md`](SECURITY.md) | Vulnerability reports |
 | [`CHANGELOG.md`](CHANGELOG.md) | User-facing release notes |
 | [`RELEASING.md`](RELEASING.md) | How maintainers cut a version |
+| [`BRANCHING.md`](BRANCHING.md) | `master` / tags / PR target |
 
 ## Code of collaboration
 
