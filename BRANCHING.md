@@ -5,7 +5,7 @@ How we treat Git branches on [piclab](https://github.com/MarsResearcher/piclab).
 ## Default branch: `master`
 
 - **Production truth** — GitHub Pages demo and releases track `master`.
-- **Protected** — collaborators cannot force-push or delete `master`. Repository admins may still update the tip (maintainer API push / emergency fixes).
+- **Protected (ruleset)** — non-admins cannot delete or force-push `master`. Repository admins may bypass (needed for maintainer API push).
 - External work lands via **pull request** into `master`. Do not push directly unless you are the maintainer.
 
 ## Tags: `v*`

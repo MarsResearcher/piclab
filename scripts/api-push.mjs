@@ -112,7 +112,12 @@ async function main() {
       sha: commit.sha,
       force: true,
     });
-  } catch {
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    // Only create the ref when it truly does not exist yet.
+    if (!/→ 404/.test(msg)) {
+      throw err;
+    }
     await api('POST', `/repos/${OWNER}/${REPO}/git/refs`, {
       ref: `refs/heads/${BRANCH}`,
       sha: commit.sha,
