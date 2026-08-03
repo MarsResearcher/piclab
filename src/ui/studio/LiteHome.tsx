@@ -71,10 +71,19 @@ const CATEGORY_CHIPS: { id: CategoryChip; label: string }[] = [
 const STYLE_TAGS = ['摄影', '编辑', '极简', '促销'] as const;
 const XHS_SHELF_TAGS = [
   { id: null as string | null, label: '全部' },
-  { id: '封面', label: '封面' },
-  { id: '内页', label: '内页结构' },
+  { id: '签名', label: '视觉签名' },
+  { id: '文字干货', label: '文字干货' },
   { id: '成套', label: '成套笔记' },
   { id: '摄影', label: '摄影向' },
+] as const;
+const XHS_CAT_TAGS = [
+  { id: null as string | null, label: '类别不限' },
+  { id: '生活', label: '生活 Plog' },
+  { id: '氛围', label: '氛围' },
+  { id: '旅行', label: '旅行' },
+  { id: '知识', label: '知识' },
+  { id: '种草', label: '种草' },
+  { id: '手账', label: '手账' },
 ] as const;
 
 type PreviewState = {
@@ -271,6 +280,7 @@ export function TemplateSections({
   const [libraryTab, setLibraryTab] = useState<LibraryTab>('builtin');
   const [category, setCategory] = useState<CategoryChip>('all');
   const [styleTag, setStyleTag] = useState<string | null>(null);
+  const [xhsCatTag, setXhsCatTag] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -335,6 +345,9 @@ export function TemplateSections({
     if (styleTag) {
       list = list.filter((t) => t.tags?.includes(styleTag));
     }
+    if (category === 'xhsNote' && xhsCatTag) {
+      list = list.filter((t) => t.tags?.includes(xhsCatTag));
+    }
     if (q) {
       list = list.filter(
         (t) =>
@@ -343,7 +356,7 @@ export function TemplateSections({
       );
     }
     return list;
-  }, [builtins, category, styleTag, q]);
+  }, [builtins, category, styleTag, xhsCatTag, q]);
 
   const filteredUserTemplates = useMemo(() => {
     if (!q) return userTemplates;
@@ -419,6 +432,7 @@ export function TemplateSections({
                   onClick={() => {
                     setCategory(c.id);
                     setStyleTag(null);
+                    setXhsCatTag(null);
                   }}
                 >
                   {c.label}
@@ -426,18 +440,37 @@ export function TemplateSections({
               ))}
             </div>
             {showBuiltinGrid && category === 'xhsNote' && (
-              <div className="template-chip-row is-secondary" role="toolbar" aria-label="小红书分区">
-                {XHS_SHELF_TAGS.map((tag) => (
-                  <button
-                    key={tag.label}
-                    type="button"
-                    className={`template-chip ${styleTag === tag.id ? 'active' : ''}`}
-                    onClick={() => setStyleTag(tag.id)}
-                  >
-                    {tag.label}
-                  </button>
-                ))}
-              </div>
+              <>
+                <div className="template-chip-row is-secondary" role="toolbar" aria-label="小红书分区">
+                  {XHS_SHELF_TAGS.map((tag) => (
+                    <button
+                      key={tag.label}
+                      type="button"
+                      className={`template-chip ${styleTag === tag.id ? 'active' : ''}`}
+                      onClick={() => {
+                        setStyleTag(tag.id);
+                        if (tag.id !== null && tag.id !== '签名') setXhsCatTag(null);
+                      }}
+                    >
+                      {tag.label}
+                    </button>
+                  ))}
+                </div>
+                {(styleTag === null || styleTag === '签名') && (
+                  <div className="template-chip-row is-secondary" role="toolbar" aria-label="签名类别">
+                    {XHS_CAT_TAGS.map((tag) => (
+                      <button
+                        key={tag.label}
+                        type="button"
+                        className={`template-chip ${xhsCatTag === tag.id ? 'active' : ''}`}
+                        onClick={() => setXhsCatTag(tag.id)}
+                      >
+                        {tag.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </>
             )}
 
             {showBuiltinGrid && category !== 'xhsNote' && (
@@ -478,7 +511,7 @@ export function TemplateSections({
                   空白开写 · 封面
                 </button>
                 <p className="hint">
-                  小红书笔记枢纽 — 先选结构（封面/内页/成套），进编辑器再换主题与加页
+                  物料专场 — 视觉签名为主货架；文字干货/成套仍可用；空白开写走封面卡片工厂
                 </p>
               </div>
             )}
@@ -487,7 +520,7 @@ export function TemplateSections({
               <>
                 <p className="hint">
                   {category === 'xhsNote'
-                    ? '按卡片类型与成套笔记浏览 — 点开预览再用'
+                    ? '视觉签名 / 文字干货 / 成套 — 点开预览再用；签名以换图改字为主'
                     : '签名版式 — 配图场 + 字体对撞，点开预览再用'}
                 </p>
                 <div className="template-grid">

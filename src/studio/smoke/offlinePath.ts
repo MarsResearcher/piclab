@@ -91,10 +91,19 @@ export function runOfflineSmoke(): SmokeResult[] {
     });
     const xhsCards = xhs.filter((t) => t.id.startsWith('builtin-xhs-card-'));
     const xhsSuites = xhs.filter((t) => t.id.startsWith('builtin-xhs-suite-'));
+    const xhsSigs = xhs.filter((t) => t.tags?.includes('签名'));
+    const catTags = ['生活', '氛围', '旅行', '知识', '种草', '手账'] as const;
+    const catsOk = catTags.every((c) => xhsSigs.some((t) => t.tags?.includes(c)));
+    const dryGoods = xhs.filter((t) => t.tags?.includes('文字干货'));
     results.push({
       name: 'wechat-xhs-templates',
       ok: wechat.length >= 3 && xhsCards.length >= 12 && xhsSuites.length >= 2,
       detail: `wechat=${wechat.length} xhsCards=${xhsCards.length} xhsSuites=${xhsSuites.length} xhs=${xhs.length}`,
+    });
+    results.push({
+      name: 'xhs-signatures',
+      ok: xhsSigs.length >= 12 && catsOk && dryGoods.length >= 12,
+      detail: `sigs=${xhsSigs.length} catsOk=${catsOk} dryGoods=${dryGoods.length}`,
     });
   } catch (e) {
     results.push({

@@ -51,6 +51,7 @@ import {
   buildXhsSuiteDocument,
   type XhsCardTypeId,
 } from './xhsCardTypes';
+import { XHS_SIGNATURE_BUILTINS } from './xhsSignatures';
 import type { XhsTheme } from './xhsTheme';
 
 function put(doc: StudioDocument, nodes: SceneNode[]): void {
@@ -1050,7 +1051,7 @@ const xhsCardBuiltins: BuiltinTemplate[] = XHS_CARD_TYPES.map((meta) => ({
   name: `小红书 · ${meta.label}`,
   description: meta.description,
   sceneId: 'xhsNote' as const,
-  tags: [shelfTag(meta.shelf), '编辑'],
+  tags: [shelfTag(meta.shelf), '文字干货', '编辑'],
   build: async () =>
     buildXhsCardDocument(meta.id, XHS_CARD_THEME[meta.id] ?? { skin: 'classic', palette: 'peach' }),
 }));
@@ -1063,6 +1064,8 @@ const xhsSuiteBuiltins: BuiltinTemplate[] = XHS_SUITE_PRESETS.map((suite) => ({
   tags: ['成套', '编辑'],
   build: async () => buildXhsSuiteDocument(suite.cardTypes, suite.theme, suite.name),
 }));
+
+const xhsSignatureBuiltins: BuiltinTemplate[] = XHS_SIGNATURE_BUILTINS;
 
 /* Photography side branch — not text-as-image main path */
 const xhsProductSquare: BuiltinTemplate = {
@@ -1136,6 +1139,7 @@ const builtinTemplates: BuiltinTemplate[] = [
   wechatHeadlinePhoto,
   wechatHeadlineBlocks,
   wechatSubSquare,
+  ...xhsSignatureBuiltins,
   ...xhsCardBuiltins,
   ...xhsSuiteBuiltins,
   xhsProductSquare,
