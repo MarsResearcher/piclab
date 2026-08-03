@@ -9,7 +9,7 @@ import { readFileSync } from 'node:fs';
 import { basename } from 'node:path';
 
 const OWNER = 'MarsResearcher';
-const REPO = 'PixelWorks';
+const REPO = 'piclab';
 const BRANCH = process.argv[2] ?? 'master';
 const TOKEN = process.env.GH_TOKEN || process.env.GITHUB_TOKEN;
 if (!TOKEN) {

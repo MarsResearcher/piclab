@@ -6,7 +6,7 @@ import { readdirSync, readFileSync, statSync } from 'node:fs';
 import { join, relative, basename } from 'node:path';
 
 const OWNER = 'MarsResearcher';
-const REPO = 'PixelWorks';
+const REPO = 'piclab';
 const BRANCH = 'gh-pages';
 const DIST = 'dist';
 const TOKEN = process.env.GH_TOKEN || process.env.GITHUB_TOKEN;
