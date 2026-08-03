@@ -3,6 +3,7 @@ import {
   createFolder,
   deleteFolder,
   deleteUserTemplate,
+  ensureProjectThumbnail,
   getPickPreviewHiRes,
   listBuiltinTemplates,
   listFolders,
@@ -676,14 +677,47 @@ function ProjectCard({
   onRefresh: () => void;
 }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [cover, setCover] = useState<string | null>(project.thumbnail ?? null);
+  const [coverLoading, setCoverLoading] = useState(!project.thumbnail);
   const title = displayProjectTitle(project.name, project.sceneId);
   const kind = sceneLabel(project.sceneId);
+
+  useEffect(() => {
+    setCover(project.thumbnail ?? null);
+    if (project.thumbnail) {
+      setCoverLoading(false);
+      return;
+    }
+    let cancelled = false;
+    setCoverLoading(true);
+    void ensureProjectThumbnail(project.id).then((url) => {
+      if (cancelled) return;
+      setCover(url);
+      setCoverLoading(false);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [project.id, project.thumbnail, project.updatedAt]);
 
   return (
     <div className={`hub-card ${menuOpen ? 'is-menu-open' : ''}`}>
       <button type="button" className="hub-card-main" onClick={onOpen}>
-        <span className={`lite-recent-thumb ${sceneTone(project.sceneId)}`}>
-          {kind.slice(0, 1)}
+        <span
+          className={[
+            'lite-recent-thumb',
+            sceneTone(project.sceneId),
+            cover ? 'has-cover' : 'is-placeholder',
+            coverLoading && !cover ? 'is-loading' : '',
+          ]
+            .filter(Boolean)
+            .join(' ')}
+        >
+          {cover ? (
+            <img src={cover} alt="" loading="lazy" decoding="async" />
+          ) : (
+            <span className="lite-recent-thumb-fallback">{kind}</span>
+          )}
         </span>
         <span className="lite-recent-name" title={title}>
           {title}

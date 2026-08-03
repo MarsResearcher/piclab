@@ -29,6 +29,8 @@ export {
   deleteFolder,
   moveProjectToFolder,
   setProjectStarred,
+  updateProjectThumbnail,
+  ensureProjectThumbnail,
   type StudioProject,
   type ProjectMeta,
   type ProjectFolder,

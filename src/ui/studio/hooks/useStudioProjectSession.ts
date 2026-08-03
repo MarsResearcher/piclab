@@ -16,6 +16,8 @@ import {
   renameProject,
   saveUserTemplate,
   blobToThumbnailDataUrl,
+  updateProjectThumbnail,
+  imageDataToThumbDataUrl,
   subscribeSaveStatus,
   type BootstrapResult,
   type ProjectMeta,
@@ -212,12 +214,26 @@ export function useStudioProjectSession({
   const onGoHome = useCallback(() => {
     void (async () => {
       await flushProjectSave();
+      const doc = storeRef.current?.getDocument() ?? null;
+      const assets = assetsRef.current;
+      const active = project;
+      if (doc && assets && active && rendererRef.current) {
+        try {
+          const flat = rendererRef.current.flatten(doc);
+          if (flat) {
+            const url = await imageDataToThumbDataUrl(flat, 'thumb');
+            await updateProjectThumbnail(active.id, url);
+          }
+        } catch {
+          /* cover is best-effort */
+        }
+      }
       setScreen('home');
       onLandingChange?.('home');
       setProjectListOpen(false);
       setTemplateOpen(false);
     })();
-  }, [onLandingChange]);
+  }, [assetsRef, onLandingChange, project, rendererRef, storeRef]);
 
   const onSaveAsTemplate = useCallback(() => {
     const doc = storeRef.current!.getDocument();

@@ -6,7 +6,8 @@ import { createId, migrateDocument, type SceneId, type StudioDocument } from '..
 import { getScene } from '../plugins/host';
 import type { SceneCreateOptions } from '../plugins/types';
 import type { VfsFolder } from '../../core/vfsTypes';
-import type { AssetStore } from './assetStore';
+import { AssetStore } from './assetStore';
+import { renderDocumentThumb } from '../templates/previewThumb';
 
 const DB_NAME = 'piclab-studio';
 const VERSION = 4;
@@ -40,6 +41,8 @@ export type StudioProject = {
   /** null = root / uncategorized */
   folderId: string | null;
   starred: boolean;
+  /** JPEG/PNG data URL of the active page — home card cover. */
+  thumbnail?: string;
 };
 
 export type ProjectMeta = {
@@ -50,6 +53,7 @@ export type ProjectMeta = {
   updatedAt: number;
   folderId: string | null;
   starred: boolean;
+  thumbnail?: string | null;
 };
 
 export type ListProjectsOpts = {
@@ -254,6 +258,7 @@ function toMeta(p: StudioProject): ProjectMeta {
     updatedAt: n.updatedAt,
     folderId: n.folderId,
     starred: n.starred,
+    thumbnail: n.thumbnail ?? null,
   };
 }
 
@@ -477,6 +482,7 @@ export async function saveActiveProject(
     document: { ...document, name, sceneId },
     assets: await collectAssets(document, assets),
     updatedAt: now,
+    thumbnail: existing.thumbnail,
   };
   await putProject(next);
   prefs.activeProjectId = next.id;
@@ -674,6 +680,49 @@ export async function setProjectStarred(
   project.updatedAt = Date.now();
   await putProject(project);
   return toMeta(project);
+}
+
+/** Persist a home-card cover without bumping `updatedAt` (keeps recent order stable). */
+export async function updateProjectThumbnail(
+  projectId: string,
+  thumbnail: string,
+): Promise<ProjectMeta | null> {
+  const project = await getProject(projectId);
+  if (!project) return null;
+  project.thumbnail = thumbnail;
+  await putProject(project);
+  return toMeta(project);
+}
+
+const thumbInflight = new Map<string, Promise<string | null>>();
+
+/**
+ * Return cached project cover, or rasterize the stored document once and save it.
+ * Used by the home grid for legacy projects that never captured a thumb.
+ */
+export async function ensureProjectThumbnail(projectId: string): Promise<string | null> {
+  const hit = thumbInflight.get(projectId);
+  if (hit) return hit;
+
+  const run = (async (): Promise<string | null> => {
+    const project = await getProject(projectId);
+    if (!project) return null;
+    if (project.thumbnail) return project.thumbnail;
+    const assets = new AssetStore();
+    await hydrateAssets(project, assets);
+    const url = await renderDocumentThumb(project.document, assets, 'thumb');
+    if (!url) return null;
+    project.thumbnail = url;
+    await putProject(project);
+    return url;
+  })();
+
+  thumbInflight.set(projectId, run);
+  try {
+    return await run;
+  } finally {
+    thumbInflight.delete(projectId);
+  }
 }
 
 /** Bind flush on tab hide / unload so mid-edit work is not lost. */

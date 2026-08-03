@@ -32,6 +32,7 @@ export {
   getScenePreviewThumb,
   getPickPreviewHiRes,
   warmTemplatePreviews,
+  imageDataToThumbDataUrl,
   DEFAULT_XHS_THEME,
   XHS_PALETTES,
   XHS_SKIN_META,
