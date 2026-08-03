@@ -107,10 +107,24 @@ export function runOfflineSmoke(): SmokeResult[] {
       ok: xhsSigs.length >= 12 && catsOk && dryGoods.length >= 12,
       detail: `sigs=${xhsSigs.length} catsOk=${catsOk} dryGoods=${dryGoods.length}`,
     });
+    const stickerSrcOk = STICKER_CATALOG.every(
+      (s) =>
+        s.source &&
+        (s.source.kind === 'lucide'
+          ? Boolean(s.source.icon)
+          : s.source.kind === 'illustration' && Boolean(s.source.file)),
+    );
+    const lucideCount = STICKER_CATALOG.filter((s) => s.source.kind === 'lucide').length;
+    const illustCount = STICKER_CATALOG.filter((s) => s.source.kind === 'illustration').length;
     results.push({
       name: 'xhs-atmosphere',
-      ok: STICKER_CATALOG.length >= 40 && journal.length >= 6,
-      detail: `stickers=${STICKER_CATALOG.length} journal=${journal.length}`,
+      ok:
+        STICKER_CATALOG.length >= 50 &&
+        journal.length >= 6 &&
+        stickerSrcOk &&
+        lucideCount >= 40 &&
+        illustCount >= 6,
+      detail: `stickers=${STICKER_CATALOG.length} lucide=${lucideCount} illust=${illustCount} journal=${journal.length}`,
     });
   } catch (e) {
     results.push({

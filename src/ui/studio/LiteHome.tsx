@@ -391,11 +391,17 @@ export function TemplateSections({
 
   return (
     <>
-      <section className={`lite-section lite-section-last ${hideSectionChrome ? 'is-hub-embed' : ''}`}>
+      <section
+        className={`lite-section lite-section-last ${hideSectionChrome ? 'is-hub-embed' : ''} ${category === 'xhsNote' ? 'is-xhs-specialty' : ''}`}
+      >
         {!hideSectionChrome && (
           <div className="lite-section-head">
-            <h3 className="lite-section-title">模板库</h3>
-            <span className="lite-section-tag">分类 · 预览</span>
+            <h3 className="lite-section-title">
+              {category === 'xhsNote' ? '\u5c0f\u7ea2\u4e66\u7269\u6599\u4e13\u573a' : '\u6a21\u677f\u5e93'}
+            </h3>
+            <span className="lite-section-tag">
+              {category === 'xhsNote' ? '\u7b7e\u540d\u00b7\u624b\u8d26\u00b7\u5e72\u8d27' : '\u5206\u7c7b \u00b7 \u9884\u89c8'}
+            </span>
           </div>
         )}
 

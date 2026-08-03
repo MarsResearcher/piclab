@@ -147,9 +147,9 @@ const sigJournalSpring: BuiltinTemplate = {
     });
     nodes.push(
       ...(await placeCornerStickers(frameId, assets, W, H, {
-        tl: 'bloom-cluster',
+        tl: 'illust-plant',
         tr: 'star-four',
-        br: 'bunny',
+        br: 'illust-loving',
         bl: 'flower-tulip',
       })),
     );
@@ -256,7 +256,7 @@ const sigJournalWishlist: BuiltinTemplate = {
     nodes.push(
       ...(await scatterStickers(frameId, assets, [
         { id: 'megaphone', x: W - 200, y: paperY + 40, width: 100, deg: 12 },
-        { id: 'book-open', x: paperX + 40, y: H - 200, width: 96, deg: -8 },
+        { id: 'illust-reading', x: paperX + 24, y: H - 280, width: 160, deg: -4 },
         { id: 'magnifier', x: W - 200, y: H - 220, width: 90, deg: 6 },
         { id: 'star-spark', x: paperX + 200, y: paperY + 160, width: 48, deg: -15 },
       ])),
@@ -369,7 +369,7 @@ const sigJournalEmergency: BuiltinTemplate = {
       ...(await scatterStickers(frameId, assets, [
         { id: 'arrow-sketch', x: W - 220, y: 160, width: 100, deg: 20 },
         { id: 'exclaim', x: 90, y: 280, width: 48, deg: -12 },
-        { id: 'smile', x: W - 220, y: H - 280, width: 110, deg: 8 },
+        { id: 'illust-meditating', x: W - 260, y: H - 320, width: 170, deg: 4 },
         { id: 'heart', x: 100, y: H - 260, width: 56, deg: -10 },
       ])),
     ];
@@ -845,7 +845,7 @@ const sigJournalSteps: BuiltinTemplate = {
       ...(await scatterStickers(frameId, assets, [
         { id: 'crown', x: W - 220, y: 100, width: 88, deg: 12 },
         { id: 'fire', x: 90, y: H - 220, width: 72, deg: -8 },
-        { id: 'corgi', x: W - 240, y: H - 280, width: 120, deg: 6 },
+        { id: 'illust-dancing', x: W - 260, y: H - 320, width: 170, deg: 4 },
         { id: 'sparkle-trio', x: W - 200, y: 400, width: 80, deg: -5 },
       ])),
     );

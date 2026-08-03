@@ -1,11 +1,12 @@
 /**
- * Load / place bundled stickers (SVG → ImageData → ImageNode).
+ * Load / place stickers from Lucide (runtime) or Open Doodles illustrations.
  */
 
 import type { AssetStore } from '../store/assetStore';
 import type { ImageNode, SceneNode } from '../model';
 import { makeImageInRect } from './templateAssets';
 import { STICKER_BY_ID, STICKER_CATALOG, type StickerId } from './stickerCatalog';
+import { hasLucideIcon, rasterLucideIcon, rasterSvgUrl } from './stickerRaster';
 
 const mem = new Map<string, ImageData>();
 
@@ -22,31 +23,7 @@ function proceduralSticker(id: string, size = 256): ImageData {
   ctx.strokeStyle = '#1A1510';
   ctx.lineWidth = size * 0.04;
   ctx.stroke();
-  ctx.fillStyle = '#1A1510';
-  ctx.font = `bold ${Math.round(size * 0.14)}px sans-serif`;
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(id.slice(0, 4), size / 2, size / 2);
   return ctx.getImageData(0, 0, size, size);
-}
-
-async function decodeUrl(url: string): Promise<ImageData> {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`sticker ${url}: ${res.status}`);
-  const blob = await res.blob();
-  // SVG may need explicit type for createImageBitmap in some engines
-  const typed =
-    blob.type && blob.type !== 'application/octet-stream'
-      ? blob
-      : new Blob([await blob.arrayBuffer()], { type: 'image/svg+xml' });
-  const bmp = await createImageBitmap(typed);
-  const canvas = document.createElement('canvas');
-  canvas.width = bmp.width;
-  canvas.height = bmp.height;
-  const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
-  ctx.drawImage(bmp, 0, 0);
-  bmp.close();
-  return ctx.getImageData(0, 0, canvas.width, canvas.height);
 }
 
 export async function loadSticker(id: string): Promise<ImageData> {
@@ -54,9 +31,21 @@ export async function loadSticker(id: string): Promise<ImageData> {
   if (hit) return hit;
   const meta = STICKER_BY_ID[id];
   if (!meta) throw new Error(`Unknown sticker: ${id}`);
-  const path = `/stickers/${meta.file}`;
+
   try {
-    const data = await decodeUrl(path);
+    let data: ImageData;
+    const src = meta.source;
+    if (src.kind === 'lucide') {
+      if (!hasLucideIcon(src.icon)) throw new Error(`missing lucide ${src.icon}`);
+      data = await rasterLucideIcon(src.icon, {
+        size: 256,
+        color: src.color,
+        strokeWidth: src.strokeWidth,
+        pad: 8,
+      });
+    } else {
+      data = await rasterSvgUrl(`/illustrations/${src.file}`, 360);
+    }
     mem.set(id, data);
     return data;
   } catch {
@@ -109,7 +98,6 @@ export type StickerSlot = {
   opacity?: number;
 };
 
-/** Place several stickers (corners / accents). */
 export async function scatterStickers(
   parentId: string,
   assets: AssetStore,

@@ -810,7 +810,9 @@ export function StudioEditor({ onOpenLab, landing = 'home', onLandingChange }: P
   }
 
   return (
-    <div className={`studio ${layersOpen ? 'layers-open' : ''}`}>
+    <div
+      className={`studio ${layersOpen ? 'layers-open' : ''} ${sceneId === 'xhsNote' ? 'is-xhs' : ''}`}
+    >
       <StudioTopBar
         project={project}
         projects={projects}
@@ -1144,11 +1146,6 @@ export function StudioEditor({ onOpenLab, landing = 'home', onLandingChange }: P
                 )}
               </div>
             )}
-          {sceneId === 'xhsNote' && (
-            <div className="studio-xhs-theme-dock">
-              <XhsThemeBar theme={xhsTheme} onChange={applyXhsThemeChange} />
-            </div>
-          )}
           {imageBarPos && selectedImage && !cropImageId && (
             <ImageContextBar
               screenX={imageBarPos.x}
@@ -1220,8 +1217,15 @@ export function StudioEditor({ onOpenLab, landing = 'home', onLandingChange }: P
         </main>
 
         <aside className="studio-right glass">
+          {sceneId === 'xhsNote' && (
+            <XhsThemeBar
+              variant="sidebar"
+              theme={xhsTheme}
+              onChange={applyXhsThemeChange}
+            />
+          )}
           <header className="panel-header">
-            <span>{UI.props}</span>
+            <span>{sceneId === 'xhsNote' ? '\u56fe\u5c42\u5c5e\u6027' : UI.props}</span>
           </header>
           <PropsPanel
             node={selected ?? null}
