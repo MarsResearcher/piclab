@@ -104,8 +104,8 @@ Inspired by common OSS health checklists ([Shields](https://shields.io/), README
 | README + demo + license | Done |
 | Issue / PR templates | Done |
 | Contributing + security policy | Done |
-| CI badge (Actions smoke/build) | Done (`.github/workflows/ci.yml`) |
-| Changelog / tagged releases | Done (`CHANGELOG.md`, tag `v0.1.21`) |
+| CI badge (Actions smoke/build) | File ready locally; push needs `workflow` OAuth scope |
+| Changelog / tagged releases | Done (`CHANGELOG.md`, [v0.1.21](https://github.com/MarsResearcher/piclab/releases/tag/v0.1.21)) |
 | Screenshot / short GIF in README | Done (Lite Home shot; GIF welcome as a PR) |
 | Code of conduct | Add when community grows |
 
