@@ -1,7 +1,8 @@
 # PicLab Studio
 
 [![Live Demo](https://img.shields.io/badge/demo-marsresearcher.github.io%2Fpiclab-34d3c0?style=flat-square&logo=github)](https://marsresearcher.github.io/piclab/)
-[![Version](https://img.shields.io/badge/version-0.1.21-blue?style=flat-square)](https://github.com/MarsResearcher/piclab)
+[![CI](https://github.com/MarsResearcher/piclab/actions/workflows/ci.yml/badge.svg)](https://github.com/MarsResearcher/piclab/actions/workflows/ci.yml)
+[![Version](https://img.shields.io/badge/version-0.1.21-blue?style=flat-square)](https://github.com/MarsResearcher/piclab/releases/tag/v0.1.21)
 [![License: MIT](https://img.shields.io/badge/license-MIT-green?style=flat-square)](LICENSE)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Vite](https://img.shields.io/badge/Vite-6-646CFF?style=flat-square&logo=vite&logoColor=white)](https://vitejs.dev/)
@@ -26,6 +27,8 @@
 **→ [https://marsresearcher.github.io/piclab/](https://marsresearcher.github.io/piclab/)**
 
 Open in a modern Chromium / Firefox / Safari. No account required.
+
+![PicLab Studio Lite Home — template shelves](docs/screenshots/lite-home.jpg)
 
 ## Quick start
 
@@ -101,9 +104,9 @@ Inspired by common OSS health checklists ([Shields](https://shields.io/), README
 | README + demo + license | Done |
 | Issue / PR templates | Done |
 | Contributing + security policy | Done |
-| CI badge (Actions smoke/build) | Planned when `workflow` push scope is available |
-| Changelog / tagged releases | Planned |
-| Screenshot / short GIF in README | Welcome as a PR |
+| CI badge (Actions smoke/build) | Done (`.github/workflows/ci.yml`) |
+| Changelog / tagged releases | Done (`CHANGELOG.md`, tag `v0.1.21`) |
+| Screenshot / short GIF in README | Done (Lite Home shot; GIF welcome as a PR) |
 | Code of conduct | Add when community grows |
 
 ---
