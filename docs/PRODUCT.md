@@ -74,7 +74,7 @@ An offline layout bench for Xiaohongshu creators — editable templates, project
 | --- | --- | --- |
 | **P0** | Shorten Xiaohongshu path to export | Fewer clicks to sets; discoverability of 成套 / 手账 |
 | **P1** | Narrative assets | Official sample note packs made *in* PicLab |
-| **P2** | Everything else | Lab, 练习纸, cards — keep, don’t headline |
+| **P2** | Everything else | Lab (free playground), 练习纸, cards — keep, don’t headline |
 
 When in doubt: improve the primary JTBD loop before adding a new scene family.
 
