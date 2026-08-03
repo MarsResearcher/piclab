@@ -27,6 +27,10 @@ import { getNodeBoundsInDoc, groupContentBoundsLocal } from './groupBounds';
 import { inkLocalBounds } from './inkGeometry';
 import { strategyPaint } from './nodeStrategies';
 import { rotateHandlePoint, selectionBounds } from './selection';
+import {
+  canvasPaintStyle,
+  hasVisibleFill,
+} from '../paint/fillValue';
 
 type GroupRaster = {
   key: string;
@@ -100,23 +104,27 @@ function drawTextHorizontal(ctx: CanvasRenderingContext2D, node: TextNode): void
   const lh = (node.lineHeight ?? 1.25) * node.fontSize;
   const startY = -((lines.length - 1) * lh) / 2;
 
-  const hasFill = !!node.color && node.color !== 'transparent';
+  const hasFill = hasVisibleFill(node.color);
   const hasStroke =
-    node.strokeWidth > 0 &&
-    !!node.strokeColor &&
-    node.strokeColor !== 'transparent';
+    node.strokeWidth > 0 && hasVisibleFill(node.strokeColor);
+  const textBox = measureTextBounds(node);
 
   for (let i = 0; i < lines.length; i++) {
     const y = startY + i * lh;
     const line = lines[i] ?? '';
     if (hasStroke) {
       ctx.lineWidth = node.strokeWidth;
-      ctx.strokeStyle = node.strokeColor;
+      ctx.strokeStyle = canvasPaintStyle(
+        ctx,
+        node.strokeColor,
+        textBox.w,
+        textBox.h,
+      );
       ctx.lineJoin = 'round';
       ctx.strokeText(line, 0, y);
     }
     if (hasFill) {
-      ctx.fillStyle = node.color;
+      ctx.fillStyle = canvasPaintStyle(ctx, node.color, textBox.w, textBox.h);
       ctx.fillText(line, 0, y);
     }
   }
@@ -138,18 +146,24 @@ function drawTextVertical(ctx: CanvasRenderingContext2D, node: TextNode): void {
   for (const col of cols) maxChars = Math.max(maxChars, col.length);
   const blockH = Math.max(lh * maxChars, node.fontSize);
 
-  const hasFill = !!node.color && node.color !== 'transparent';
+  const hasFill = hasVisibleFill(node.color);
   const hasStroke =
-    node.strokeWidth > 0 &&
-    !!node.strokeColor &&
-    node.strokeColor !== 'transparent';
+    node.strokeWidth > 0 && hasVisibleFill(node.strokeColor);
+  const textBox = measureTextBounds(node);
 
   if (hasStroke) {
     ctx.lineWidth = node.strokeWidth;
-    ctx.strokeStyle = node.strokeColor;
+    ctx.strokeStyle = canvasPaintStyle(
+      ctx,
+      node.strokeColor,
+      textBox.w,
+      textBox.h,
+    );
     ctx.lineJoin = 'round';
   }
-  if (hasFill) ctx.fillStyle = node.color;
+  if (hasFill) {
+    ctx.fillStyle = canvasPaintStyle(ctx, node.color, textBox.w, textBox.h);
+  }
 
   // Column 0 (first line) sits on the right ? traditional CJK column order.
   const xRight = (cols.length - 1) * colGap * 0.5;
@@ -179,13 +193,22 @@ function drawTextVertical(ctx: CanvasRenderingContext2D, node: TextNode): void {
 function drawShape(ctx: CanvasRenderingContext2D, node: ShapeNode): void {
   ctx.globalAlpha = node.opacity;
   ctx.lineWidth = node.strokeWidth;
-  ctx.strokeStyle = node.stroke;
-  ctx.fillStyle = node.fill;
+  const hasFill = hasVisibleFill(node.fill);
+  const hasStroke =
+    node.strokeWidth > 0 && hasVisibleFill(node.stroke);
+  if (hasStroke) {
+    ctx.strokeStyle = canvasPaintStyle(
+      ctx,
+      node.stroke,
+      node.width,
+      node.height,
+    );
+  }
+  if (hasFill) {
+    ctx.fillStyle = canvasPaintStyle(ctx, node.fill, node.width, node.height);
+  }
   if (node.dash?.length) ctx.setLineDash(node.dash);
   else ctx.setLineDash([]);
-  const hasFill = node.fill && node.fill !== 'transparent';
-  const hasStroke =
-    node.strokeWidth > 0 && !!node.stroke && node.stroke !== 'transparent';
 
   switch (node.shape) {
     case 'rect': {
@@ -554,7 +577,8 @@ function paintFrame(
   frame: FrameNode,
   paint: PaintCtx,
 ): void {
-  ctx.fillStyle = frame.fill ?? '#1a1d24';
+  const frameFill = frame.fill ?? '#1a1d24';
+  ctx.fillStyle = canvasPaintStyle(ctx, frameFill, frame.width, frame.height);
   ctx.fillRect(0, 0, frame.width, frame.height);
 
   for (const childId of frame.children) {

@@ -4938,17 +4938,33 @@ body {
 
 .studio-color-image-row {
   display: flex;
-  align-items: center;
-  gap: 8px;
+  align-items: flex-start;
+  gap: 10px;
 }
 
 .studio-color-image-thumb {
-  width: 28px;
-  height: 28px;
-  border-radius: 6px;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
   object-fit: cover;
   flex-shrink: 0;
   border: 1px solid var(--line);
+}
+
+.studio-color-image-row .studio-color-quick.is-image-extract {
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(32px, 1fr));
+  gap: 8px;
+}
+
+.studio-color-image-row .studio-color-quick.is-image-extract .studio-color-chip {
+  width: 100%;
+  min-width: 32px;
+  min-height: 32px;
+  aspect-ratio: 1;
+  border-radius: 8px;
 }
 
 .studio-color-gradients {

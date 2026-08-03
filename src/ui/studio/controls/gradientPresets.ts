@@ -1,6 +1,8 @@
 /**
- * Curated gradient chips — UI shows the ramp; click commits a solid hex.
+ * Curated gradient chips — click applies a real linear fill on the canvas.
  */
+
+import { encodeLinearGradient } from '../../../studio/paint/fillValue';
 
 export type GradientPreset = {
   id: string;
@@ -8,15 +10,23 @@ export type GradientPreset = {
   stops: [string, string] | [string, string, string];
 };
 
-/** Pick solid from ramp: middle stop, or last of two. */
+const GRADIENT_ANGLE = 135;
+
+/** Fill string stored on shape/frame nodes. */
+export function fillFromGradient(g: GradientPreset): string {
+  return encodeLinearGradient(GRADIENT_ANGLE, g.stops);
+}
+
+/** CSS background for chip previews. */
+export function gradientCss(g: GradientPreset): string {
+  return fillFromGradient(g);
+}
+
+/** @deprecated Prefer fillFromGradient — kept for any external callers. */
 export function solidFromGradient(g: GradientPreset): string {
   const stops = g.stops;
   if (stops.length >= 3) return stops[1]!;
   return stops[stops.length - 1]!;
-}
-
-export function gradientCss(g: GradientPreset): string {
-  return `linear-gradient(135deg, ${g.stops.join(', ')})`;
 }
 
 export const GRADIENT_PRESETS: GradientPreset[] = [
@@ -37,3 +47,7 @@ export const GRADIENT_PRESETS: GradientPreset[] = [
   { id: 'lemon', name: '柠金', stops: ['#2A2808', '#C9A227', '#FFE14D'] },
   { id: 'berry', name: '浆果', stops: ['#1A0814', '#8B2252', '#F0A0C0'] },
 ];
+
+export function findGradientPreset(fill: string): GradientPreset | undefined {
+  return GRADIENT_PRESETS.find((g) => fillFromGradient(g) === fill.trim());
+}

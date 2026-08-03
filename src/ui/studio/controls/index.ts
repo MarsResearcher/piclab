@@ -22,6 +22,7 @@ export { collectImagePalettes } from './collectImagePalettes';
 export {
   GRADIENT_PRESETS,
   solidFromGradient,
+  fillFromGradient,
   gradientCss,
   type GradientPreset,
 } from './gradientPresets';

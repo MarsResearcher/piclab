@@ -17,9 +17,14 @@ import {
 import type { ImageColorPalette } from './extractImageColors';
 import {
   GRADIENT_PRESETS,
+  fillFromGradient,
+  findGradientPreset,
   gradientCss,
-  solidFromGradient,
 } from './gradientPresets';
+import {
+  cssFillBackground,
+  isLinearGradientFill,
+} from '../../../studio/paint/fillValue';
 
 type Props = {
   label?: string;
@@ -41,11 +46,30 @@ type Props = {
 
 function toPickerValue(value: string): string {
   if (!value || value === 'transparent') return '#34D3C0';
+  if (isLinearGradientFill(value)) {
+    const preset = findGradientPreset(value);
+    return preset?.stops[0] ?? '#34D3C0';
+  }
   return normalizeHex(value) ?? '#34D3C0';
 }
 
 function isNone(value: string): boolean {
   return !value || value === 'transparent';
+}
+
+function paintsMatch(a: string, b: string): boolean {
+  if (isLinearGradientFill(a) || isLinearGradientFill(b)) {
+    return a.trim() === b.trim();
+  }
+  return colorsEqual(a, b);
+}
+
+function displayLabel(value: string, transparentLabel: string): string {
+  if (isNone(value)) return transparentLabel;
+  if (isLinearGradientFill(value)) {
+    return findGradientPreset(value)?.name ?? '\u6e10\u53d8';
+  }
+  return toPickerValue(value);
 }
 
 type FlyoutPos = { top: number; left: number; openUp: boolean };
@@ -71,8 +95,9 @@ export function ColorField({
   const flyoutRef = useRef<HTMLDivElement>(null);
   const panelId = useId();
   const none = isNone(value);
-  const display = none ? 'transparent' : toPickerValue(value);
+  const display = none ? 'transparent' : value;
   const hasImageColors = Boolean(imagePalettes?.some((p) => p.colors.length > 0));
+  const swatchBg = none ? undefined : cssFillBackground(display);
 
   useEffect(() => {
     if (!open) setHexDraft(toPickerValue(value));
@@ -83,7 +108,7 @@ export function ColorField({
     const place = () => {
       const r = rootRef.current!.getBoundingClientRect();
       const flyH = flyoutRef.current?.offsetHeight ?? 320;
-      const flyW = Math.min(260, window.innerWidth - 16);
+      const flyW = Math.min(280, window.innerWidth - 16);
       const spaceBelow = window.innerHeight - r.bottom - 12;
       const openUp = spaceBelow < flyH && r.top > spaceBelow + 40;
       let left = r.left;
@@ -127,12 +152,13 @@ export function ColorField({
     };
   }, [open, onEnd]);
 
-  const commit = (hex: string, close = false) => {
-    const n = normalizeHex(hex);
+  const commit = (paint: string, close = false) => {
+    const isGrad = isLinearGradientFill(paint);
+    const n = isGrad ? paint.trim() : normalizeHex(paint);
     if (!n) return;
     onBegin?.();
     onChange(n);
-    setHexDraft(n);
+    setHexDraft(isGrad ? toPickerValue(n) : n);
     setRecent(pushRecentColor(n));
     if (close) {
       setOpen(false);
@@ -199,14 +225,18 @@ export function ColorField({
                   <span>{'\u6700\u8fd1\u4f7f\u7528'}</span>
                 </div>
                 <div className="studio-color-quick">
-                  {sanitizeRecentColors(recent).map((hex) => (
+                  {sanitizeRecentColors(recent).map((paint) => (
                     <button
-                      key={hex}
+                      key={paint}
                       type="button"
-                      className={`studio-color-chip ${!none && colorsEqual(display, hex) ? 'active' : ''}`}
-                      title={hex}
-                      style={{ background: hex }}
-                      onClick={() => commit(hex)}
+                      className={`studio-color-chip ${!none && paintsMatch(display, paint) ? 'active' : ''}`}
+                      title={
+                        isLinearGradientFill(paint)
+                          ? (findGradientPreset(paint)?.name ?? '\u6e10\u53d8')
+                          : paint
+                      }
+                      style={{ background: cssFillBackground(paint) }}
+                      onClick={() => commit(paint)}
                     />
                   ))}
                 </div>
@@ -229,12 +259,12 @@ export function ColorField({
                             alt=""
                           />
                         ) : null}
-                        <div className="studio-color-quick is-palette">
+                        <div className="studio-color-quick is-image-extract">
                           {pal.colors.map((hex) => (
                             <button
                               key={`${pal.id}-${hex}`}
                               type="button"
-                              className={`studio-color-chip ${!none && colorsEqual(display, hex) ? 'active' : ''}`}
+                              className={`studio-color-chip ${!none && paintsMatch(display, hex) ? 'active' : ''}`}
                               title={hex}
                               style={{ background: hex }}
                               onClick={() => commit(hex)}
@@ -252,20 +282,20 @@ export function ColorField({
               <div className="studio-color-flyout-head">
                 <span>{'\u6e10\u53d8\u8272\u5361'}</span>
                 <span className="studio-color-flyout-hint">
-                  {'\u70b9\u9009\u5199\u5165\u7eaf\u8272'}
+                  {'\u70b9\u9009\u5e94\u7528\u6e10\u53d8'}
                 </span>
               </div>
               <div className="studio-color-gradients">
                 {GRADIENT_PRESETS.map((g) => {
-                  const solid = solidFromGradient(g);
+                  const fill = fillFromGradient(g);
                   return (
                     <button
                       key={g.id}
                       type="button"
-                      className={`studio-color-gradient-chip ${!none && colorsEqual(display, solid) ? 'active' : ''}`}
-                      title={`${g.name} \u2192 ${solid}`}
+                      className={`studio-color-gradient-chip ${!none && paintsMatch(display, fill) ? 'active' : ''}`}
+                      title={g.name}
                       style={{ background: gradientCss(g) }}
-                      onClick={() => commit(solid)}
+                      onClick={() => commit(fill)}
                     />
                   );
                 })}
@@ -290,7 +320,7 @@ export function ColorField({
                   <button
                     key={s.hex}
                     type="button"
-                    className={`studio-color-chip ${!none && colorsEqual(display, s.hex) ? 'active' : ''}`}
+                    className={`studio-color-chip ${!none && paintsMatch(display, s.hex) ? 'active' : ''}`}
                     title={s.label}
                     style={{ background: s.hex }}
                     onClick={() => commit(s.hex)}
@@ -317,7 +347,7 @@ export function ColorField({
                         <button
                           key={`${pal.id}-${s.hex}`}
                           type="button"
-                          className={`studio-color-chip ${!none && colorsEqual(display, s.hex) ? 'active' : ''}`}
+                          className={`studio-color-chip ${!none && paintsMatch(display, s.hex) ? 'active' : ''}`}
                           title={`${pal.name} · ${s.label}`}
                           style={{ background: s.hex }}
                           onClick={() => commit(s.hex)}
@@ -389,11 +419,11 @@ export function ColorField({
       >
         <span
           className={`studio-color-swatch-face ${none ? 'is-transparent' : ''}`}
-          style={none ? undefined : { background: display }}
+          style={none ? undefined : { background: swatchBg }}
         />
         {!compact && (
           <span className="studio-color-swatch-hex">
-            {none ? transparentLabel : display}
+            {displayLabel(value, transparentLabel)}
           </span>
         )}
       </button>
