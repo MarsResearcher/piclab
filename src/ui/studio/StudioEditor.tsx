@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { publicUrl } from '../../lib/publicUrl';
 import {
   AssetStore,
   DocStore,
@@ -453,7 +454,7 @@ export function StudioEditor({ onOpenLab, landing = 'home', onLandingChange }: P
         await importBlob(seeded.blob, seeded.name, seeded.id);
         return;
       }
-      const res = await fetch('/samples/lab-sample.jpg');
+      const res = await fetch(publicUrl('samples/lab-sample.jpg'));
       if (!res.ok) throw new Error('sample missing');
       await importBlob(await res.blob(), 'sample');
     } catch {

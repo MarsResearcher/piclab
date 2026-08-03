@@ -3,6 +3,7 @@
  * Not the product ROI path; kept for exploration behind Studio.
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { publicUrl } from '../lib/publicUrl';
 import { CanvasManager } from '../core/canvasManager';
 import {
   asExperimentResult,
@@ -257,7 +258,7 @@ export function LabApp({ onBack }: Props) {
   }, [active, params, hasImage, isStir, appMode, startStirLoop]);
 
   const loadSample = async () => {
-    const res = await fetch('/samples/lab-sample.jpg');
+    const res = await fetch(publicUrl('samples/lab-sample.jpg'));
     const blob = await res.blob();
     const bitmap = await createImageBitmap(blob);
     const c = document.createElement('canvas');

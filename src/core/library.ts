@@ -3,6 +3,7 @@
  * Stores blobs + metadata; no server needed.
  */
 
+import { publicUrl } from '../lib/publicUrl';
 import {
   STOCK_CATALOG,
   stockLibrarySourceId,
@@ -122,7 +123,7 @@ export async function ensureSampleInLibrary(): Promise<LibraryItem | null> {
     return existing;
   }
   try {
-    const res = await fetch('/samples/lab-sample.jpg');
+    const res = await fetch(publicUrl('samples/lab-sample.jpg'));
     if (!res.ok) {
       await ensureTemplateStockInLibrary();
       return null;
@@ -151,7 +152,7 @@ export async function ensureTemplateStockInLibrary(): Promise<number> {
     const sourceId = stockLibrarySourceId(stock.id);
     if (bySource.has(sourceId)) continue;
     try {
-      const res = await fetch(`/template-assets/${stock.file}`);
+      const res = await fetch(publicUrl(`template-assets/${stock.file}`));
       if (!res.ok) continue;
       const blob = await res.blob();
       if (blob.size < 40_000) continue;

@@ -1,5 +1,6 @@
 /** Shared stock search helpers + session cache (survives panel remount). */
 
+import { publicUrl } from '../../lib/publicUrl';
 import { STOCK_CATALOG, type StockItem } from '../../studio/templates/stockCatalog';
 
 export type StockPhoto = {
@@ -136,7 +137,7 @@ export function friendlyStockError(err: unknown): string {
 }
 
 function localItemToPhoto(item: StockItem): StockPhoto {
-  const url = `/template-assets/${item.file}`;
+  const url = publicUrl(`template-assets/${item.file}`);
   return {
     id: `local-${item.id}`,
     title: item.name,

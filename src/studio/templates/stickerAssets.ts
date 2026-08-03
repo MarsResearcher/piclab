@@ -4,6 +4,7 @@
 
 import type { AssetStore } from '../store/assetStore';
 import type { ImageNode, SceneNode } from '../model';
+import { publicUrl } from '../../lib/publicUrl';
 import { makeImageInRect } from './templateAssets';
 import { STICKER_BY_ID, STICKER_CATALOG, type StickerId } from './stickerCatalog';
 import { hasLucideIcon, rasterLucideIcon, rasterSvgUrl } from './stickerRaster';
@@ -44,7 +45,7 @@ export async function loadSticker(id: string): Promise<ImageData> {
         pad: 8,
       });
     } else {
-      data = await rasterSvgUrl(`/illustrations/${src.file}`, 360);
+      data = await rasterSvgUrl(publicUrl(`illustrations/${src.file}`), 360);
     }
     mem.set(id, data);
     return data;

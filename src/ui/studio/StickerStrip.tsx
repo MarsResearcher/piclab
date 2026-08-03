@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { publicUrl } from '../../lib/publicUrl';
 import {
   STICKER_CATALOG,
   listStickersByTag,
@@ -23,7 +24,7 @@ const TAGS: { id: StickerTag | null; label: string }[] = [
 
 function thumbSrc(item: StickerItem): string {
   const src = item.source;
-  if (src.kind === 'illustration') return `/illustrations/${src.file}`;
+  if (src.kind === 'illustration') return publicUrl(`illustrations/${src.file}`);
   return lucideThumbDataUrl(src.icon, {
     color: src.color ?? '#1A1510',
     strokeWidth: src.strokeWidth ?? 2,

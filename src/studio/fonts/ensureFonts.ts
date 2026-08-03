@@ -1,6 +1,19 @@
-import './bundled.css';
+import bundledCss from './bundled.css?raw';
+import { publicUrl } from '../../lib/publicUrl';
 
 let ready: Promise<void> | null = null;
+let cssInjected = false;
+
+function injectBundledFontCss(): void {
+  if (cssInjected || typeof document === 'undefined') return;
+  cssInjected = true;
+  const base = publicUrl('fonts/');
+  const css = bundledCss.replaceAll("url('/fonts/", `url('${base}`);
+  const style = document.createElement('style');
+  style.setAttribute('data-piclab-fonts', '1');
+  style.textContent = css;
+  document.head.appendChild(style);
+}
 
 /** Families we ship under /public/fonts (OFL, commercial-ok). */
 export const BUNDLED_FONT_FAMILIES = [
@@ -36,6 +49,7 @@ export const BUNDLED_FONT_FAMILIES = [
 export function ensureStudioFonts(): Promise<void> {
   if (ready) return ready;
   ready = (async () => {
+    injectBundledFontCss();
     if (typeof document === 'undefined' || !document.fonts?.load) return;
     const loads = BUNDLED_FONT_FAMILIES.flatMap((family) => [
       document.fonts.load(`400 48px "${family}"`),

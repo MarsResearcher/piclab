@@ -10,7 +10,7 @@ import { AssetStore } from '../store/assetStore';
 import { buildBuiltinDocument } from './builtins';
 
 /** Bump when layouts or encode quality change. */
-const CACHE_VER = 'v26';
+const CACHE_VER = 'v27';
 
 const mem = new Map<string, string>();
 

@@ -10,6 +10,7 @@ import {
   type ImageMask,
   type ImageNode,
 } from '../model';
+import { publicUrl } from '../../lib/publicUrl';
 import {
   STOCK_BY_ID,
   STOCK_CATALOG,
@@ -88,7 +89,7 @@ export async function loadTemplateAsset(id: TemplateAssetId): Promise<ImageData>
   if (!meta) {
     throw new Error(`Unknown template asset: ${id}`);
   }
-  const path = `/template-assets/${meta.file}`;
+  const path = publicUrl(`template-assets/${meta.file}`);
   try {
     const data = await decodeUrl(path);
     mem.set(id, data);
