@@ -5,6 +5,17 @@ All notable changes to this project are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.1.23] — 2026-08-03
+
+### Added
+
+- Custom linear gradient editor (angle + 2–3 stops) in the color flyout
+- `docs/README.md` — docs index explaining root vs `docs/`
+
+### Changed
+
+- Community / process docs moved under `docs/` (SUPPORT, CONTRIBUTING, SECURITY, CoC, BRANCHING, RELEASING); root keeps README / LICENSE / CHANGELOG
+
 ## [0.1.22] — 2026-08-03
 
 ### Added
@@ -47,6 +58,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Xiaohongshu specialty light chrome; Lucide + Open Doodles sticker pack
 - Journal atmosphere signatures and materials shelf
 
-[0.1.22]: https://github.com/MarsResearcher/piclab/releases/tag/v0.1.22
+[0.1.23]: https://github.com/MarsResearcher/piclab/releases/tag/v0.1.23
+[0.1.22]: https://github.com/MarsResearcher/piclab/compare/v0.1.22...v0.1.23
 [0.1.21]: https://github.com/MarsResearcher/piclab/compare/v0.1.21...v0.1.22
 [0.1.19]: https://github.com/MarsResearcher/piclab/compare/v0.1.19...v0.1.21

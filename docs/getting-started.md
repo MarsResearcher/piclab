@@ -12,7 +12,7 @@ PicLab Studio is an **offline-first** browser design bench. Projects, user templ
 
 No account. Closing the tab does not wipe IndexedDB until the browser profile is cleared.
 
-Questions and ideas: [Discussions](https://github.com/MarsResearcher/piclab/discussions) · channel map: [`SUPPORT.md`](../SUPPORT.md).
+Questions and ideas: [Discussions](https://github.com/MarsResearcher/piclab/discussions) · channel map: [`SUPPORT.md`](SUPPORT.md).
 
 ## Local development
 
@@ -66,6 +66,7 @@ Deeper layering: [`src/studio/ARCHITECTURE.md`](../src/studio/ARCHITECTURE.md).
 ## Need help?
 
 - Product direction: [`PRODUCT.md`](PRODUCT.md)
+- Docs index: [`README.md`](README.md)
 - Bugs / features: [issue templates](https://github.com/MarsResearcher/piclab/issues/new/choose)
-- Security: [`SECURITY.md`](../SECURITY.md)
-- Conduct: [`CODE_OF_CONDUCT.md`](../CODE_OF_CONDUCT.md)
+- Security: [`SECURITY.md`](SECURITY.md)
+- Conduct: [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md)

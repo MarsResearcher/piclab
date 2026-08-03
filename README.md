@@ -9,7 +9,7 @@
 
 <p align="center">
   <a href="https://marsresearcher.github.io/piclab/"><img src="https://img.shields.io/badge/demo-live-34d3c0?style=flat-square&logo=github" alt="Live demo" /></a>
-  <a href="https://github.com/MarsResearcher/piclab/releases/tag/v0.1.22"><img src="https://img.shields.io/badge/version-0.1.22-0b0e11?style=flat-square" alt="Version" /></a>
+  <a href="https://github.com/MarsResearcher/piclab/releases/tag/v0.1.23"><img src="https://img.shields.io/badge/version-0.1.23-0b0e11?style=flat-square" alt="Version" /></a>
   <a href="https://github.com/MarsResearcher/piclab/actions/workflows/ci.yml"><img src="https://img.shields.io/github/actions/workflow/status/MarsResearcher/piclab/ci.yml?branch=master&style=flat-square&label=CI" alt="CI" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-1a2027?style=flat-square" alt="MIT" /></a>
   <img src="https://img.shields.io/badge/TypeScript-5-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript" />
@@ -135,10 +135,11 @@ React 19 · TypeScript 5 · Vite 6 · Canvas 2D · IndexedDB · Web Workers (hea
 | --- | --- |
 | Questions & ideas | [Discussions](https://github.com/MarsResearcher/piclab/discussions) |
 | Bugs / scoped features | [Issues](https://github.com/MarsResearcher/piclab/issues) (use templates) |
-| How we help | [`SUPPORT.md`](SUPPORT.md) |
-| Contribute | [`CONTRIBUTING.md`](CONTRIBUTING.md) · [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) |
+| How we help | [`docs/SUPPORT.md`](docs/SUPPORT.md) |
+| Contribute | [`docs/CONTRIBUTING.md`](docs/CONTRIBUTING.md) · [`docs/CODE_OF_CONDUCT.md`](docs/CODE_OF_CONDUCT.md) |
 | Product direction | [`docs/PRODUCT.md`](docs/PRODUCT.md) |
-| Security | [`SECURITY.md`](SECURITY.md) — **not** a public issue |
+| Security | [`docs/SECURITY.md`](docs/SECURITY.md) — **not** a public issue |
+| Docs index | [`docs/README.md`](docs/README.md) |
 
 - Prefer small, reviewable PRs
 - UI changes: include a screenshot or short clip
@@ -151,11 +152,11 @@ React 19 · TypeScript 5 · Vite 6 · Canvas 2D · IndexedDB · Web Workers (hea
 | Now | Next |
 | --- | --- |
 | Support channels + Discussions + Dependabot | Short product GIF / motion tour |
-| Issue forms + RELEASING.md + CI workflows | Learn from real Xiaohongshu creator usage |
+| Issue forms + docs under `docs/` + CI workflows | Learn from real Xiaohongshu creator usage |
 | Journal「手账壳」+ product consensus | Bilingual docs polish; curated good-first-issues |
 | Smoke + architecture docs | Good-first-issues from real creator bugs |
 
-See [`CHANGELOG.md`](CHANGELOG.md), [`RELEASING.md`](RELEASING.md), and [v0.1.22](https://github.com/MarsResearcher/piclab/releases/tag/v0.1.22).
+See [`CHANGELOG.md`](CHANGELOG.md), [`docs/RELEASING.md`](docs/RELEASING.md), and [v0.1.23](https://github.com/MarsResearcher/piclab/releases/tag/v0.1.23).
 
 ---
 

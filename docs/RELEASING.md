@@ -9,7 +9,7 @@ Ship a release when users can **feel** a change: demo behavior, templates, expor
 ## Steps
 
 1. **Bump** `package.json` `version` (semver; currently `0.1.x`).
-2. **CHANGELOG** — Keep a Changelog: user-facing `Added` / `Changed` / `Fixed` under a dated section. Link the compare URL.
+2. **CHANGELOG** — Keep a Changelog in [`../CHANGELOG.md`](../CHANGELOG.md): user-facing `Added` / `Changed` / `Fixed` under a dated section. Link the compare URL.
 3. **Verify locally**
    ```bash
    npm run smoke

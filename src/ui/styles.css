@@ -4989,6 +4989,83 @@ body {
   outline-offset: 1px;
 }
 
+.studio-color-grad-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+  padding-top: 10px;
+  border-top: 1px solid color-mix(in srgb, var(--line) 80%, transparent);
+}
+
+.studio-color-grad-preview {
+  width: 100%;
+  height: 36px;
+  border-radius: 8px;
+  border: 1px solid color-mix(in srgb, var(--ink) 18%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, #fff 10%, transparent);
+}
+
+.studio-color-grad-angle {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.studio-color-grad-angle input[type='range'] {
+  flex: 1;
+  min-width: 0;
+  accent-color: var(--accent);
+}
+
+.studio-color-grad-stops {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.studio-color-grad-stop {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  overflow: hidden;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.studio-color-grad-stop input[type='color'] {
+  position: absolute;
+  inset: -4px;
+  width: calc(100% + 8px);
+  height: calc(100% + 8px);
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.studio-color-grad-stop-btn {
+  appearance: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  border: 1px dashed var(--line);
+  background: transparent;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.studio-color-grad-stop-btn:hover {
+  color: var(--ink);
+  border-color: var(--accent);
+}
+
 .studio-color-custom {
   display: flex;
   align-items: center;

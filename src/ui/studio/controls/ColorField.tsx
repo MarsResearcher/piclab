@@ -23,7 +23,9 @@ import {
 } from './gradientPresets';
 import {
   cssFillBackground,
+  encodeLinearGradient,
   isLinearGradientFill,
+  parseFill,
 } from '../../../studio/paint/fillValue';
 
 type Props = {
@@ -72,6 +74,27 @@ function displayLabel(value: string, transparentLabel: string): string {
   return toPickerValue(value);
 }
 
+type GradDraft = { angle: number; stops: string[] };
+
+function seedGradDraft(value: string): GradDraft {
+  const p = parseFill(value);
+  if (p.kind === 'linear') {
+    const stops = p.stops
+      .map((s) => normalizeHex(s) ?? s)
+      .filter(Boolean)
+      .slice(0, 3);
+    if (stops.length >= 2) {
+      return { angle: Math.round(p.angleDeg) % 360, stops };
+    }
+  }
+  const solid = normalizeHex(value) ?? '#2F6F4E';
+  return { angle: 135, stops: [solid, '#FFFCF7'] };
+}
+
+function draftFill(d: GradDraft): string {
+  return encodeLinearGradient(d.angle, d.stops);
+}
+
 type FlyoutPos = { top: number; left: number; openUp: boolean };
 
 export function ColorField({
@@ -90,6 +113,7 @@ export function ColorField({
   const [recent, setRecent] = useState<string[]>(() =>
     sanitizeRecentColors(getRecentColors()),
   );
+  const [gradDraft, setGradDraft] = useState<GradDraft>(() => seedGradDraft(value));
   const [pos, setPos] = useState<FlyoutPos | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
   const flyoutRef = useRef<HTMLDivElement>(null);
@@ -102,6 +126,10 @@ export function ColorField({
   useEffect(() => {
     if (!open) setHexDraft(toPickerValue(value));
   }, [value, open]);
+
+  useEffect(() => {
+    if (open) setGradDraft(seedGradDraft(value));
+  }, [open, value]);
 
   useLayoutEffect(() => {
     if (!open || !rootRef.current) return;
@@ -159,11 +187,22 @@ export function ColorField({
     onBegin?.();
     onChange(n);
     setHexDraft(isGrad ? toPickerValue(n) : n);
+    if (isGrad) setGradDraft(seedGradDraft(n));
     setRecent(pushRecentColor(n));
     if (close) {
       setOpen(false);
       onEnd?.();
     }
+  };
+
+  const commitGradDraft = (next: GradDraft, close = false) => {
+    const stops = next.stops
+      .map((s) => normalizeHex(s))
+      .filter((s): s is string => Boolean(s));
+    if (stops.length < 2) return;
+    const cleaned = { angle: ((next.angle % 360) + 360) % 360, stops };
+    setGradDraft(cleaned);
+    commit(draftFill(cleaned), close);
   };
 
   const commitNone = (close = true) => {
@@ -299,6 +338,83 @@ export function ColorField({
                     />
                   );
                 })}
+              </div>
+              <div className="studio-color-grad-editor">
+                <div className="studio-color-flyout-head">
+                  <span>{'\u81ea\u5b9a\u4e49\u6e10\u53d8'}</span>
+                  <span className="studio-color-flyout-hint">{gradDraft.angle}&deg;</span>
+                </div>
+                <div
+                  className="studio-color-grad-preview"
+                  style={{ background: draftFill(gradDraft) }}
+                  title={'\u9884\u89c8'}
+                />
+                <label className="studio-color-grad-angle">
+                  <span>{'\u89d2\u5ea6'}</span>
+                  <input
+                    type="range"
+                    min={0}
+                    max={360}
+                    step={1}
+                    value={gradDraft.angle}
+                    onPointerDown={() => onBegin?.()}
+                    onChange={(e) =>
+                      commitGradDraft({
+                        ...gradDraft,
+                        angle: Number(e.target.value),
+                      })
+                    }
+                  />
+                </label>
+                <div className="studio-color-grad-stops">
+                  {gradDraft.stops.map((stop, i) => (
+                    <label key={i} className="studio-color-grad-stop" title={`Stop ${i + 1}`}>
+                      <input
+                        type="color"
+                        value={normalizeHex(stop) ?? '#888888'}
+                        onPointerDown={() => onBegin?.()}
+                        onChange={(e) => {
+                          const next = [...gradDraft.stops];
+                          next[i] = e.target.value;
+                          commitGradDraft({ ...gradDraft, stops: next });
+                        }}
+                      />
+                    </label>
+                  ))}
+                  {gradDraft.stops.length < 3 ? (
+                    <button
+                      type="button"
+                      className="studio-color-grad-stop-btn"
+                      title={'\u6dfb\u52a0\u8272\u6807'}
+                      onClick={() => {
+                        commitGradDraft({
+                          ...gradDraft,
+                          stops: [
+                            gradDraft.stops[0]!,
+                            '#8FA3B8',
+                            gradDraft.stops[gradDraft.stops.length - 1]!,
+                          ],
+                        });
+                      }}
+                    >
+                      +
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      className="studio-color-grad-stop-btn"
+                      title={'\u79fb\u9664\u4e2d\u95f4\u8272\u6807'}
+                      onClick={() =>
+                        commitGradDraft({
+                          ...gradDraft,
+                          stops: [gradDraft.stops[0]!, gradDraft.stops[2]!],
+                        })
+                      }
+                    >
+                      −
+                    </button>
+                  )}
+                </div>
               </div>
             </section>
 
