@@ -1,5 +1,5 @@
 /**
- * Pro+ Laboratory — frozen playground / principle modes.
+ * Laboratory — frozen playground / principle modes.
  * Not the product ROI path; kept for exploration behind Studio.
  */
 import { useCallback, useEffect, useRef, useState } from 'react';
@@ -48,7 +48,7 @@ export function LabApp({ onBack }: Props) {
   const [active, setActive] = useState<Experiment | null>(null);
   const [params, setParams] = useState<ParamValues>({});
   const [busy, setBusy] = useState(false);
-  const [status, setStatus] = useState('Pro+ 实验室');
+  const [status, setStatus] = useState('\u5b9e\u9a8c\u5ba4');
   const [hasImage, setHasImage] = useState(false);
   const [narration, setNarration] = useState('');
   const [auxLabel, setAuxLabel] = useState('原理视窗');
@@ -287,7 +287,7 @@ export function LabApp({ onBack }: Props) {
           )}
           <div className="lab-panel-head-meta">
             {onBack && <span className="lab-panel-title">{'\u5b9e\u9a8c\u5ba4'}</span>}
-            <span className="brand-sub">pro+</span>
+            <span className="brand-sub">lab</span>
           </div>
         </header>
         <ModeSwitcher
@@ -332,7 +332,7 @@ export function LabApp({ onBack }: Props) {
       <aside className="panel right glass">
         <header className="panel-header">
           <span>{active?.name ?? '实验'}</span>
-          <span className="tag">pro+</span>
+          <span className="tag">lab</span>
         </header>
         {appMode === 'play' && (
           <PlayPanel

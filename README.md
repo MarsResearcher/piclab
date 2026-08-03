@@ -28,7 +28,7 @@
 | --- | --- |
 | **Your data stays local** | Projects & user templates in IndexedDB — close the tab, work resumes |
 | **Templates are documents** | Decomposable nodes (type / image / shape / group) — not locked SKUs |
-| **Studio → Lab** | Layout & type in Studio; optional Pro+ pixel experiments in Lab |
+| **Studio → Lab** | Layout & type in Studio; optional free pixel experiments in Lab |
 | **China-native scenes** | 小红书 · 公众号 · 手账壳 · 田字格 / 拼音格 / 书法格 |
 
 Built for people who want a **local design bench**, not another subscription canvas.
@@ -85,7 +85,7 @@ Flow: preview → **使用此模板** → edit → **导出** PNG / ZIP / PDF.
 - **Export** — page PNG, multi-page ZIP, PDF (optional bleed)
 - **Print** — A4 田字格 / 拼音格 / 书法格, offline geometry
 - **Stock + stickers** — bundled photos + Lucide / Open Doodles chrome
-- **Lab (Pro+)** — FFT, convolution, pixel sort, channel remap, …
+- **Lab** — free pixel playground (FFT, convolution, pixel sort, channel remap, …); same app, no paywall
 
 ---
 
@@ -112,9 +112,9 @@ Details: [`src/studio/ARCHITECTURE.md`](src/studio/ARCHITECTURE.md) · Contribut
 
 ---
 
-## Lab (Pro+)
+## Lab
 
-Optional playground behind Studio:
+Optional **free** pixel playground behind Studio (same offline app — no account, no paid tier):
 
 1. Copy `src/experiments/template.ts`
 2. Implement `id / name / params / apply(imageData, params)`

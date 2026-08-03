@@ -35,7 +35,7 @@ GitHub Pages builds set `GITHUB_ACTIONS=true` so Vite `base` becomes `/piclab/`.
 Lite Home  →  StudioEditor  →  DocStore / AssetStore  →  Canvas engine
      ↑              │                    │
   projects     export PNG/ZIP/PDF    IndexedDB
-  templates    Lab (Pro+)            schema migrate
+  templates    Lab (free playground) schema migrate
 ```
 
 - **UI** talks to stores and plugins only — never raw pixel buffers for document edits.

@@ -6,7 +6,7 @@ const LANDING_KEY = 'piclab-studio-landing';
 
 /**
  * Product shell: Studio (scenes) is default.
- * Play/Learn live behind Pro+ as LabApp — frozen, no new features.
+ * Play/Learn live as LabApp — frozen experimental playground, no new features.
  */
 export function App() {
   const [surface, setSurface] = useState<'studio' | 'lab'>('studio');

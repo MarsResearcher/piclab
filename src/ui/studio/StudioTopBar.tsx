@@ -254,7 +254,7 @@ export function StudioTopBar({
           )}
         </div>
         {onOpenLab && (
-          <button type="button" className="btn icon" onClick={onOpenLab} title="实验室 Pro+">
+          <button type="button" className="btn icon" onClick={onOpenLab} title="实验室">
             <FlaskConical size={16} />
           </button>
         )}
