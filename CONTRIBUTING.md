@@ -4,9 +4,10 @@ Thanks for considering a contribution. This project is **offline-first** design 
 
 ## Before you start
 
-1. Open or skim an [issue](https://github.com/MarsResearcher/piclab/issues) so we can align on scope.
-2. Prefer small, reviewable PRs over large “rewrite everything” diffs.
-3. Keep Studio architecture boundaries: UI talks to **stores / plugins**, not raw pixels.
+1. Read [`SUPPORT.md`](SUPPORT.md) — questions & early ideas go to [Discussions](https://github.com/MarsResearcher/piclab/discussions); actionable bugs/features use Issues.
+2. Skim [`docs/PRODUCT.md`](docs/PRODUCT.md) so the idea fits the beachhead (and not an anti-job).
+3. Open or skim an [issue](https://github.com/MarsResearcher/piclab/issues) so we can align on scope before a large PR.
+4. Prefer small, reviewable PRs. Keep Studio boundaries: UI talks to **stores / plugins**, not raw pixels.
 
 ## Local setup
 
@@ -50,11 +51,13 @@ npm run build
 
 | Doc | Purpose |
 | --- | --- |
+| [`SUPPORT.md`](SUPPORT.md) | Where to ask (Discussions vs Issues) |
 | [`docs/PRODUCT.md`](docs/PRODUCT.md) | Beachhead, JTBD, love/hate, priorities |
 | [`docs/getting-started.md`](docs/getting-started.md) | Product path + where to change code |
 | [`src/studio/ARCHITECTURE.md`](src/studio/ARCHITECTURE.md) | Layer boundaries |
 | [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) | Community standards |
 | [`SECURITY.md`](SECURITY.md) | Vulnerability reports |
+| [`CHANGELOG.md`](CHANGELOG.md) | User-facing release notes |
 
 ## Code of collaboration
 

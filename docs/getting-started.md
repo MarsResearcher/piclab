@@ -12,6 +12,8 @@ PicLab Studio is an **offline-first** browser design bench. Projects, user templ
 
 No account. Closing the tab does not wipe IndexedDB until the browser profile is cleared.
 
+Questions and ideas: [Discussions](https://github.com/MarsResearcher/piclab/discussions) · channel map: [`SUPPORT.md`](../SUPPORT.md).
+
 ## Local development
 
 ```bash

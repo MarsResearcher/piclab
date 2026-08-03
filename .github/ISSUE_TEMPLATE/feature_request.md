@@ -16,3 +16,6 @@ labels: enhancement
 
 - [ ] Works offline / no required cloud account
 - [ ] Fits existing Studio architecture (UI → store → engine)
+- [ ] Aligns with [`docs/PRODUCT.md`](../../docs/PRODUCT.md) beachhead (not an anti-job)
+
+Vague brainstorms belong in [Discussions](https://github.com/MarsResearcher/piclab/discussions) first.

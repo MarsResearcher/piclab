@@ -128,17 +128,20 @@ React 19 · TypeScript 5 · Vite 6 · Canvas 2D · IndexedDB · Web Workers (hea
 
 ---
 
-## Contributing
+## Community & support
 
-Read [`CONTRIBUTING.md`](CONTRIBUTING.md) and [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md).
-
-Product direction: [`docs/PRODUCT.md`](docs/PRODUCT.md).
+| Need | Go to |
+| --- | --- |
+| Questions & ideas | [Discussions](https://github.com/MarsResearcher/piclab/discussions) |
+| Bugs / scoped features | [Issues](https://github.com/MarsResearcher/piclab/issues) (use templates) |
+| How we help | [`SUPPORT.md`](SUPPORT.md) |
+| Contribute | [`CONTRIBUTING.md`](CONTRIBUTING.md) · [`CODE_OF_CONDUCT.md`](CODE_OF_CONDUCT.md) |
+| Product direction | [`docs/PRODUCT.md`](docs/PRODUCT.md) |
+| Security | [`SECURITY.md`](SECURITY.md) — **not** a public issue |
 
 - Prefer small, reviewable PRs
 - UI changes: include a screenshot or short clip
 - Keep offline-first — no required cloud backend for core Studio
-
-Security: [`SECURITY.md`](SECURITY.md) — **do not** file public issues for vulnerabilities.
 
 ---
 
@@ -146,11 +149,10 @@ Security: [`SECURITY.md`](SECURITY.md) — **do not** file public issues for vul
 
 | Now | Next |
 | --- | --- |
-| Public demo + MIT + releases | Green CI badge (needs `workflow` OAuth push) |
-| Journal「手账壳」+ project covers | Short product GIF / motion tour |
-| Product consensus (`docs/PRODUCT.md`) | Learn from real Xiaohongshu creator usage |
-| Smoke + architecture docs | Bilingual docs polish; good-first-issues |
-| Contributor Covenant | Community growth → more governance as needed |
+| Public demo + MIT + releases | Green CI on GitHub Actions (needs `workflow` OAuth push) |
+| Support channels + Dependabot | Short product GIF / motion tour |
+| Journal「手账壳」+ product consensus | Learn from real Xiaohongshu creator usage |
+| Smoke + architecture docs | Bilingual docs polish; curated good-first-issues |
 
 See [`CHANGELOG.md`](CHANGELOG.md) and [v0.1.21](https://github.com/MarsResearcher/piclab/releases/tag/v0.1.21).
 
