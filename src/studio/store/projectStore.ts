@@ -8,23 +8,20 @@ import type { SceneCreateOptions } from '../plugins/types';
 import type { VfsFolder } from '../../core/vfsTypes';
 import { AssetStore } from './assetStore';
 import { renderDocumentThumb } from '../templates/previewThumb';
+import {
+  IDB_STORE,
+  collectAssets as idbCollectAssets,
+  hydrateAssets as idbHydrateAssets,
+  idbDelete,
+  idbGet,
+  idbGetAllKeys,
+  idbPut,
+  type StoredAsset,
+} from './idb';
 
-const DB_NAME = 'piclab-studio';
-const VERSION = 4;
-const PROJECTS = 'projects';
-const TEMPLATES = 'templates';
-const FOLDERS = 'folders';
-const PREFS = 'prefs';
-const LEGACY_KV = 'kv';
 const LEGACY_KEY = 'studio-doc';
 const PREFS_KEY = 'prefs';
-
-type StoredAsset = {
-  id: string;
-  width: number;
-  height: number;
-  blob: Blob;
-};
+const { projects: PROJECTS, folders: FOLDERS, prefs: PREFS, legacyKv: LEGACY_KV } = IDB_STORE;
 
 export type { StoredAsset };
 
@@ -89,6 +86,8 @@ let pendingAssets: AssetStore | null = null;
 let saveStatus: SaveStatus = 'idle';
 let lastSavedAt: number | null = null;
 const saveListeners = new Set<SaveListener>();
+/** Serializes overlapping flushes so two saves can never race on prefs/project id. */
+let saveChain: Promise<void> = Promise.resolve();
 
 function notifySave(status: SaveStatus, updatedAt: number | null = lastSavedAt): void {
   saveStatus = status;
@@ -108,103 +107,6 @@ export function getSaveStatus(): { status: SaveStatus; updatedAt: number | null 
   return { status: saveStatus, updatedAt: lastSavedAt };
 }
 
-function openDb(): Promise<IDBDatabase> {
-  return new Promise((resolve, reject) => {
-    const req = indexedDB.open(DB_NAME, VERSION);
-    req.onupgradeneeded = () => {
-      const db = req.result;
-      if (!db.objectStoreNames.contains(LEGACY_KV)) {
-        db.createObjectStore(LEGACY_KV);
-      }
-      if (!db.objectStoreNames.contains(PROJECTS)) {
-        db.createObjectStore(PROJECTS);
-      }
-      if (!db.objectStoreNames.contains(PREFS)) {
-        db.createObjectStore(PREFS);
-      }
-      if (!db.objectStoreNames.contains(TEMPLATES)) {
-        db.createObjectStore(TEMPLATES);
-      }
-      if (!db.objectStoreNames.contains(FOLDERS)) {
-        db.createObjectStore(FOLDERS);
-      }
-    };
-    req.onsuccess = () => resolve(req.result);
-    req.onerror = () => reject(req.error);
-  });
-}
-
-function idbGet<T>(store: string, key: string): Promise<T | null> {
-  return openDb().then(
-    (db) =>
-      new Promise((resolve, reject) => {
-        const tx = db.transaction(store, 'readonly');
-        const req = tx.objectStore(store).get(key);
-        req.onsuccess = () => resolve((req.result as T) ?? null);
-        req.onerror = () => reject(req.error);
-      }),
-  );
-}
-
-function idbPut(store: string, key: string, value: unknown): Promise<void> {
-  return openDb().then(
-    (db) =>
-      new Promise((resolve, reject) => {
-        const tx = db.transaction(store, 'readwrite');
-        tx.objectStore(store).put(value, key);
-        tx.oncomplete = () => resolve();
-        tx.onerror = () => reject(tx.error);
-      }),
-  );
-}
-
-function idbDelete(store: string, key: string): Promise<void> {
-  return openDb().then(
-    (db) =>
-      new Promise((resolve, reject) => {
-        const tx = db.transaction(store, 'readwrite');
-        tx.objectStore(store).delete(key);
-        tx.oncomplete = () => resolve();
-        tx.onerror = () => reject(tx.error);
-      }),
-  );
-}
-
-function idbGetAllKeys(store: string): Promise<string[]> {
-  return openDb().then(
-    (db) =>
-      new Promise((resolve, reject) => {
-        const tx = db.transaction(store, 'readonly');
-        const req = tx.objectStore(store).getAllKeys();
-        req.onsuccess = () => resolve((req.result as IDBValidKey[]).map(String));
-        req.onerror = () => reject(req.error);
-      }),
-  );
-}
-
-function imageDataToPngBlob(imageData: ImageData): Promise<Blob> {
-  const c = document.createElement('canvas');
-  c.width = imageData.width;
-  c.height = imageData.height;
-  c.getContext('2d')!.putImageData(imageData, 0, 0);
-  return new Promise((resolve, reject) => {
-    c.toBlob((blob) => {
-      if (blob) resolve(blob);
-      else reject(new Error('PNG encode failed'));
-    }, 'image/png');
-  });
-}
-
-async function blobToImageData(blob: Blob): Promise<ImageData> {
-  const bitmap = await createImageBitmap(blob);
-  const c = document.createElement('canvas');
-  c.width = bitmap.width;
-  c.height = bitmap.height;
-  const ctx = c.getContext('2d')!;
-  ctx.drawImage(bitmap, 0, 0);
-  return ctx.getImageData(0, 0, c.width, c.height);
-}
-
 async function collectAssets(
   document: StudioDocument,
   assets: AssetStore,
@@ -213,26 +115,12 @@ async function collectAssets(
   for (const node of Object.values(document.nodes)) {
     if (node.type === 'image') assetIds.add(node.assetId);
   }
-  const stored: StoredAsset[] = [];
-  for (const id of assetIds) {
-    const asset = assets.get(id);
-    if (!asset) continue;
-    stored.push({
-      id: asset.id,
-      width: asset.width,
-      height: asset.height,
-      blob: await imageDataToPngBlob(asset.imageData),
-    });
-  }
-  return stored;
+  return idbCollectAssets(assetIds, assets);
 }
 
 async function hydrateAssets(project: StudioProject, assets: AssetStore): Promise<void> {
   assets.clear();
-  for (const a of project.assets) {
-    const imageData = await blobToImageData(a.blob);
-    assets.putImageData(imageData, a.id);
-  }
+  await idbHydrateAssets(project.assets, assets);
 }
 
 function defaultProjectName(sceneId: SceneId): string {
@@ -519,11 +407,15 @@ export async function flushProjectSave(): Promise<void> {
   pendingDoc = null;
   pendingAssets = null;
   notifySave('saving', lastSavedAt);
-  try {
-    await saveActiveProject(doc, assets);
-  } catch {
-    notifySave('error', lastSavedAt);
-  }
+  const snapshot = { doc, assets };
+  saveChain = saveChain.then(async () => {
+    try {
+      await saveActiveProject(snapshot.doc, snapshot.assets);
+    } catch {
+      notifySave('error', lastSavedAt);
+    }
+  });
+  await saveChain;
 }
 
 export async function switchScene(

@@ -35,6 +35,7 @@ export function makePillBadge(
     labelColor: string;
     ramp: TypeRamp;
     name?: string;
+    fontSize?: number;
   },
 ): SceneNode[] {
   const pill = makeShape(parentId, 'roundRect', {
@@ -59,7 +60,7 @@ export function makePillBadge(
       color: opts.labelColor,
       bold: true,
       fontFamily: FONT_META,
-      fontSize: Math.round(opts.height * 0.38),
+      fontSize: opts.fontSize ?? Math.round(opts.height * 0.38),
     },
   );
   return [pill, label];
@@ -153,7 +154,7 @@ export function makeTape(
   if (opts.deg) {
     tape.transform = {
       ...tape.transform,
-      rotation: (opts.deg * Math.PI) / 180,
+      rotation: opts.deg,
     };
   }
   return tape;

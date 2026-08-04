@@ -56,7 +56,7 @@ export function makePolaroid(
   if (opts.deg) {
     frame.transform = {
       ...frame.transform,
-      rotation: (opts.deg * Math.PI) / 180,
+      rotation: opts.deg,
     };
   }
   const img = makeImageInRect(
@@ -72,7 +72,7 @@ export function makePolaroid(
   if (opts.deg) {
     img.transform = {
       ...img.transform,
-      rotation: (opts.deg * Math.PI) / 180,
+      rotation: opts.deg,
     };
   }
   return [frame, img];
@@ -595,7 +595,7 @@ export function makeCompareTable(
           align: 'center',
           color: opts.ink,
           fontFamily: FONT_META,
-          fontSize: 18,
+          fontSize: 20,
           bold: true,
         },
       ),

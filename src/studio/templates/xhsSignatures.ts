@@ -690,7 +690,7 @@ const sigTravelListicle: BuiltinTemplate = {
             align: 'center',
             color: ink,
             fontFamily: FONT_META,
-            fontSize: 18,
+            fontSize: 20,
             bold: true,
           },
         ),

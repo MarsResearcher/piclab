@@ -8,7 +8,9 @@ import {
   identityTransform,
   migrateDocument,
   validateDocument,
+  type FrameNode,
   type InkNode,
+  type SceneNode,
   type StudioDocument,
   type TextNode,
 } from '../model';
@@ -27,6 +29,7 @@ import {
   resolveXhsTheme,
 } from '../templates';
 import { makeRuledLines, rootIdsOf } from '../templates/templateCraft';
+import { auditDocument } from '../templates/designAudit';
 import { hasLucideIcon } from '../templates/stickerRaster';
 import { getNodeStrategy } from '../engine/nodeStrategies';
 import { assertProjectFolderFilters } from '../store/projectFolders.selftest';
@@ -230,8 +233,16 @@ export function runOfflineSmoke(): SmokeResult[] {
 
   results.push({
     name: 'navigator-offline-safe',
-    ok: typeof navigator === 'undefined' || typeof navigator.onLine === 'boolean',
-    detail: typeof navigator !== 'undefined' ? `onLine=${navigator.onLine}` : 'node',
+    // Node <21 has no global navigator; Node 21+ exposes navigator with onLine=undefined.
+    // Either shape means the smoke path runs without a browser API — safe.
+    ok:
+      typeof navigator === 'undefined' ||
+      typeof navigator.onLine === 'boolean' ||
+      navigator.onLine === undefined,
+    detail:
+      typeof navigator === 'undefined' || navigator.onLine === undefined
+        ? 'node'
+        : `onLine=${navigator.onLine}`,
   });
 
   try {
@@ -426,8 +437,163 @@ export function runOfflineSmoke(): SmokeResult[] {
   return results;
 }
 
-export function assertOfflineSmoke(): void {
+/** 审丑引擎 smoke：对纯函数规则做确定性单元断言（不依赖 DOM/资产）。 */
+async function auditRulesSmoke(): Promise<SmokeResult> {
+  const failures: string[] = [];
+
+  // 构造基准文本节点
+  const baseText = (patch: Partial<TextNode>): TextNode => ({
+    id: 't',
+    name: 't',
+    type: 'text',
+    visible: true,
+    locked: false,
+    opacity: 1,
+    parentId: 'f',
+    transform: identityTransform(50, 500),
+    content: '测试文字',
+    fontSize: 40,
+    fontFamily: '"Smiley Sans Oblique", sans-serif',
+    color: '#111111',
+    strokeColor: '#000000',
+    strokeWidth: 0,
+    bold: true,
+    align: 'left',
+    ...patch,
+  });
+  const frame: FrameNode = {
+    id: 'f',
+    name: 'frame',
+    type: 'frame',
+    visible: true,
+    locked: false,
+    opacity: 1,
+    parentId: null,
+    transform: identityTransform(0, 0),
+    width: 1080,
+    height: 1920,
+    fill: '#ffffff',
+    children: ['t'],
+  };
+  const doc = (nodes: Record<string, SceneNode>): StudioDocument => ({
+    id: 'd',
+    name: 'd',
+    pages: [{ id: 'p', name: '1', frameIds: ['f'] }],
+    activePageId: 'p',
+    nodes: { f: { ...frame, children: Object.keys(nodes) }, ...nodes },
+    selection: [],
+  });
+
+  const assertRule = (label: string, nodes: Record<string, SceneNode>, expectError: boolean): void => {
+    const issues = auditDocument(doc(nodes));
+    const errors = issues.filter((i) => i.severity === 'error');
+    const hit = errors.length > 0;
+    if (hit !== expectError) {
+      failures.push(
+        `${label}: expect error=${expectError} got=${hit}${errors.length ? ` [${errors[0]!.rule}: ${errors[0]!.message}]` : ''}`,
+      );
+    }
+  };
+
+  // R1 竖排斜体 → 必须报错
+  assertRule('R1-vertical-oblique', { t: baseText({ writingMode: 'vertical' }) }, true);
+  // 竖排楷书 → 不报错
+  assertRule(
+    'R1-vertical-kai-ok',
+    { t: baseText({ writingMode: 'vertical', fontFamily: '"LXGW WenKai", serif' }) },
+    false,
+  );
+  // R2 衬线压扁 → 报错
+  assertRule(
+    'R2-serif-condensed',
+    {
+      t: baseText({
+        fontFamily: '"Playfair Display", serif',
+        transform: { x: 50, y: 50, scaleX: 0.7, scaleY: 1, rotation: 0 },
+      }),
+    },
+    true,
+  );
+  // R2 黑体压扁 → 不报错
+  assertRule(
+    'R2-hei-condensed-ok',
+    {
+      t: baseText({
+        fontFamily: '"Bebas Neue", sans-serif',
+        transform: { x: 50, y: 50, scaleX: 0.7, scaleY: 1, rotation: 0 },
+      }),
+    },
+    false,
+  );
+  // R4 中文小字 → 报错
+  assertRule('R4-tiny-cjk', { t: baseText({ fontSize: 16 }) }, true);
+  // R4 拉丁小字 → 不报错
+  assertRule('R4-tiny-latin-ok', { t: baseText({ fontSize: 14, content: 'Hello World' }) }, false);
+  // R3 溢出 → 构造超大文本贴右下角
+  assertRule(
+    'R3-overflow',
+    { t: baseText({ transform: identityTransform(1000, 1850), content: '超长文本测试' }) },
+    true,
+  );
+
+  // R5 亮色文字叠照片且无 halo/垫底 → 报错
+  const bright = (patch: Partial<TextNode>): TextNode =>
+    baseText({ color: '#F4F0E8', ...patch });
+  const photo: SceneNode = {
+    id: 'img',
+    name: '照片',
+    type: 'image',
+    visible: true,
+    locked: false,
+    opacity: 1,
+    parentId: 'f',
+    transform: identityTransform(0, 0),
+    assetId: 'x',
+    width: 1080,
+    height: 1920,
+  };
+  // 亮字叠照片（无垫底）→ 报错
+  assertRule(
+    'R5-accent-on-photo',
+    { img: photo, t: bright({}) },
+    true,
+  );
+  // 亮字叠照片但下方有不透明色块垫底 → 不报错
+  const card: SceneNode = {
+    id: 'card',
+    name: '卡片',
+    type: 'shape',
+    visible: true,
+    locked: false,
+    opacity: 1,
+    parentId: 'f',
+    transform: identityTransform(20, 460),
+    shape: 'roundRect',
+    width: 300,
+    height: 80,
+    fill: '#0B0910',
+    stroke: 'none',
+    strokeWidth: 0,
+  };
+  assertRule(
+    'R5-accent-on-opaque-card',
+    { img: photo, card, t: bright({ transform: identityTransform(170, 500) }) },
+    false,
+  );
+
+  const badCount = failures.length;
+  return {
+    name: 'design-audit',
+    ok: badCount === 0,
+    detail: badCount === 0 ? `rules=9 all pass` : `failures=${badCount} [${failures.join('; ')}]`,
+  };
+}
+
+export async function assertOfflineSmoke(): Promise<void> {
   const results = runOfflineSmoke();
+  const audit = await auditRulesSmoke();
+  results.push(audit);
+
   const failed = results.filter((r) => !r.ok);
   for (const r of results) {
     const mark = r.ok ? 'PASS' : 'FAIL';

@@ -64,7 +64,7 @@ export async function placeSticker(
   if (opts?.deg) {
     node.transform = {
       ...node.transform,
-      rotation: (opts.deg * Math.PI) / 180,
+      rotation: opts.deg,
     };
   }
   return node;

@@ -90,7 +90,11 @@ export function useStudioProjectSession({
   }, [assetsRef, storeRef]);
 
   const refreshProjectList = useCallback(async () => {
-    setProjects(await listProjects());
+    try {
+      setProjects(await listProjects());
+    } catch (err) {
+      console.error('refreshProjectList failed', err);
+    }
   }, []);
 
   const enterEditor = useCallback(() => {
@@ -161,55 +165,70 @@ export function useStudioProjectSession({
     ) => {
       void (async () => {
         let result: BootstrapResult | null = null;
-        switch (pick.layer) {
-          case 'parametric':
-            result = await createProjectFromScene(pick.sceneId, assetsRef.current!, {
-              ...opts,
-              xhsCardType: opts?.xhsCardType ?? pick.xhsCardType,
-              xhsTheme: opts?.xhsTheme ?? pick.xhsTheme,
-            });
-            break;
-          case 'builtin':
-            result = await createProjectFromBuiltinTemplate(
-              pick.templateId,
-              assetsRef.current!,
-            );
-            break;
-          case 'user':
-            result = await createProjectFromUserTemplate(
-              pick.templateId,
-              assetsRef.current!,
-            );
-            break;
-          default: {
-            const _exhaustive: never = pick;
-            void _exhaustive;
+        try {
+          switch (pick.layer) {
+            case 'parametric':
+              result = await createProjectFromScene(pick.sceneId, assetsRef.current!, {
+                ...opts,
+                xhsCardType: opts?.xhsCardType ?? pick.xhsCardType,
+                xhsTheme: opts?.xhsTheme ?? pick.xhsTheme,
+              });
+              break;
+            case 'builtin':
+              result = await createProjectFromBuiltinTemplate(
+                pick.templateId,
+                assetsRef.current!,
+              );
+              break;
+            case 'user':
+              result = await createProjectFromUserTemplate(
+                pick.templateId,
+                assetsRef.current!,
+              );
+              break;
+            default: {
+              const _exhaustive: never = pick;
+              void _exhaustive;
+            }
           }
+          if (!result) return;
+          applyBootstrap(result, `\u65b0\u5efa \u00b7 ${result.project.name}`);
+        } catch (err) {
+          console.error('create project failed', err);
+          setStatus(`\u521b\u5efa\u9879\u76ee\u5931\u8d25 \u00b7 \u8bf7\u91cd\u8bd5`);
         }
-        if (!result) return;
-        applyBootstrap(result, `\u65b0\u5efa \u00b7 ${result.project.name}`);
       })();
     },
-    [applyBootstrap, assetsRef],
+    [applyBootstrap, assetsRef, setStatus],
   );
 
   const onOpenProjectFromHome = useCallback(
     (id: string) => {
       void (async () => {
-        const result = await openProject(id, assetsRef.current!);
-        if (!result) return;
-        applyBootstrap(result, `\u5df2\u6253\u5f00 \u00b7 ${result.project.name}`);
+        try {
+          const result = await openProject(id, assetsRef.current!);
+          if (!result) return;
+          applyBootstrap(result, `\u5df2\u6253\u5f00 \u00b7 ${result.project.name}`);
+        } catch (err) {
+          console.error('open project failed', err);
+          setStatus(`\u6253\u5f00\u9879\u76ee\u5931\u8d25 \u00b7 \u8bf7\u91cd\u8bd5`);
+        }
       })();
     },
-    [applyBootstrap, assetsRef],
+    [applyBootstrap, assetsRef, setStatus],
   );
 
   const onContinueFromHome = useCallback(() => {
     void (async () => {
-      const result = await bootstrapProjects(assetsRef.current!);
-      applyBootstrap(result, `\u5df2\u6062\u590d \u00b7 ${result.project.name}`);
+      try {
+        const result = await bootstrapProjects(assetsRef.current!);
+        applyBootstrap(result, `\u5df2\u6062\u590d \u00b7 ${result.project.name}`);
+      } catch (err) {
+        console.error('continue failed', err);
+        setStatus(`\u6062\u590d\u5931\u8d25 \u00b7 \u8bf7\u91cd\u8bd5`);
+      }
     })();
-  }, [applyBootstrap, assetsRef]);
+  }, [applyBootstrap, assetsRef, setStatus]);
 
   const onGoHome = useCallback(() => {
     void (async () => {
@@ -242,41 +261,54 @@ export function useStudioProjectSession({
     const name = window.prompt('另存为模板（保存在本机 IndexedDB）', defaultName);
     if (name === null) return;
     void (async () => {
-      await flushProjectSave();
-      let thumbnail: string | undefined;
-      const flat = rendererRef.current!.flatten(doc);
-      if (flat) {
-        const maxW = 240;
-        const scale = Math.min(1, maxW / flat.width);
-        const c = document.createElement('canvas');
-        c.width = Math.max(1, Math.round(flat.width * scale));
-        c.height = Math.max(1, Math.round(flat.height * scale));
-        const ctx = c.getContext('2d')!;
-        const src = document.createElement('canvas');
-        src.width = flat.width;
-        src.height = flat.height;
-        src.getContext('2d')!.putImageData(flat, 0, 0);
-        ctx.drawImage(src, 0, 0, c.width, c.height);
-        const blob = await new Promise<Blob | null>((resolve) => {
-          c.toBlob((b) => resolve(b), 'image/png');
-        });
-        if (blob) thumbnail = await blobToThumbnailDataUrl(blob);
+      try {
+        await flushProjectSave();
+        let thumbnail: string | undefined;
+        const flat = rendererRef.current!.flatten(doc);
+        if (flat) {
+          const maxW = 240;
+          const scale = Math.min(1, maxW / flat.width);
+          const c = document.createElement('canvas');
+          c.width = Math.max(1, Math.round(flat.width * scale));
+          c.height = Math.max(1, Math.round(flat.height * scale));
+          const ctx = c.getContext('2d');
+          const src = document.createElement('canvas');
+          src.width = flat.width;
+          src.height = flat.height;
+          const srcCtx = src.getContext('2d');
+          if (ctx && srcCtx) {
+            srcCtx.putImageData(flat, 0, 0);
+            ctx.drawImage(src, 0, 0, c.width, c.height);
+            const blob = await new Promise<Blob | null>((resolve) => {
+              c.toBlob((b) => resolve(b), 'image/png');
+            });
+            if (blob) thumbnail = await blobToThumbnailDataUrl(blob);
+          }
+        }
+        await saveUserTemplate(name, doc, assetsRef.current!, { thumbnail });
+        setStatus(STATUS.templateSaved(name.trim() || defaultName));
+      } catch (err) {
+        console.error('save template failed', err);
+        setStatus(`\u4fdd\u5b58\u6a21\u677f\u5931\u8d25 \u00b7 \u8bf7\u91cd\u8bd5`);
       }
-      await saveUserTemplate(name, doc, assetsRef.current!, { thumbnail });
-      setStatus(STATUS.templateSaved(name.trim() || defaultName));
     })();
   }, [assetsRef, project?.name, rendererRef, setStatus, storeRef]);
 
   const onOpenProject = useCallback(
     (id: string) => {
       void (async () => {
-        const result = await openProject(id, assetsRef.current!);
-        if (!result) return;
-        applyBootstrap(result, `\u5df2\u6253\u5f00 \u00b7 ${result.project.name}`);
-        setProjectListOpen(false);
+        try {
+          const result = await openProject(id, assetsRef.current!);
+          if (!result) return;
+          applyBootstrap(result, `\u5df2\u6253\u5f00 \u00b7 ${result.project.name}`);
+          setProjectListOpen(false);
+        } catch (err) {
+          console.error('open project failed', err);
+          setStatus(`\u6253\u5f00\u9879\u76ee\u5931\u8d25 \u00b7 \u8bf7\u91cd\u8bd5`);
+        }
       })();
     },
-    [applyBootstrap, assetsRef],
+    [applyBootstrap, assetsRef, setStatus],
   );
 
   const onRenameProject = useCallback(() => {
@@ -288,13 +320,18 @@ export function useStudioProjectSession({
     const next = window.prompt('\u91cd\u547d\u540d\u9879\u76ee', seed);
     if (next === null) return;
     void (async () => {
-      const meta = await renameProject(project.id, next);
-      if (!meta) return;
-      setProject(meta);
-      const doc = storeRef.current!.getDocument();
-      if (doc) storeRef.current!.load({ ...doc, name: meta.name });
-      setStatus(`\u5df2\u91cd\u547d\u540d \u00b7 ${meta.name}`);
-      void refreshProjectList();
+      try {
+        const meta = await renameProject(project.id, next);
+        if (!meta) return;
+        setProject(meta);
+        const doc = storeRef.current!.getDocument();
+        if (doc) storeRef.current!.load({ ...doc, name: meta.name });
+        setStatus(`\u5df2\u91cd\u547d\u540d \u00b7 ${meta.name}`);
+        void refreshProjectList();
+      } catch (err) {
+        console.error('rename project failed', err);
+        setStatus(`\u91cd\u547d\u540d\u5931\u8d25 \u00b7 \u8bf7\u91cd\u8bd5`);
+      }
     })();
   }, [project, refreshProjectList, setStatus, storeRef]);
 
@@ -307,14 +344,19 @@ export function useStudioProjectSession({
     )
       return;
     void (async () => {
-      const result = await deleteProject(project.id, assetsRef.current!, sceneId);
-      if (result) applyBootstrap(result, `\u5df2\u5220\u9664 \u00b7 ${result.project.name}`);
-      else {
-        setProject(null);
-        void refreshProjectList();
+      try {
+        const result = await deleteProject(project.id, assetsRef.current!, sceneId);
+        if (result) applyBootstrap(result, `\u5df2\u5220\u9664 \u00b7 ${result.project.name}`);
+        else {
+          setProject(null);
+          void refreshProjectList();
+        }
+      } catch (err) {
+        console.error('delete project failed', err);
+        setStatus(`\u5220\u9664\u5931\u8d25 \u00b7 \u8bf7\u91cd\u8bd5`);
       }
     })();
-  }, [applyBootstrap, assetsRef, project, refreshProjectList, sceneId]);
+  }, [applyBootstrap, assetsRef, project, refreshProjectList, sceneId, setStatus]);
 
   useEffect(() => {
     if (landing === 'home') {
@@ -324,12 +366,19 @@ export function useStudioProjectSession({
     }
     let cancelled = false;
     void (async () => {
-      await ensureSampleInLibrary();
-      onStripRefresh?.();
-      const result = await bootstrapProjects(assetsRef.current!);
-      if (cancelled) return;
-      applyBootstrap(result, `\u5df2\u6062\u590d \u00b7 ${result.project.name}`);
-      setReady(true);
+      try {
+        await ensureSampleInLibrary();
+        onStripRefresh?.();
+        const result = await bootstrapProjects(assetsRef.current!);
+        if (cancelled) return;
+        applyBootstrap(result, `\u5df2\u6062\u590d \u00b7 ${result.project.name}`);
+      } catch (err) {
+        console.error('initial bootstrap failed', err);
+        if (cancelled) return;
+        setStatus(`\u521d\u59cb\u5316\u5931\u8d25 \u00b7 \u8bf7\u5237\u65b0\u9875\u9762`);
+      } finally {
+        if (!cancelled) setReady(true);
+      }
     })();
     return () => {
       cancelled = true;

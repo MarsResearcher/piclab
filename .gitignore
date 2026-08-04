@@ -8,3 +8,6 @@ dist
 .vscode/*
 !.vscode/extensions.json
 .cursor/
+
+# Local visual-verification captures (never committed)
+preview-captures/

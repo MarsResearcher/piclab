@@ -691,11 +691,16 @@ function ProjectCard({
     }
     let cancelled = false;
     setCoverLoading(true);
-    void ensureProjectThumbnail(project.id).then((url) => {
-      if (cancelled) return;
-      setCover(url);
-      setCoverLoading(false);
-    });
+    void ensureProjectThumbnail(project.id)
+      .then((url) => {
+        if (cancelled) return;
+        setCover(url);
+        setCoverLoading(false);
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setCoverLoading(false);
+      });
     return () => {
       cancelled = true;
     };

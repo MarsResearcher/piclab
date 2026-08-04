@@ -40,13 +40,13 @@ export function condenseText(node: TextNode, scaleX = 0.72): TextNode {
   };
 }
 
-/** Rotate text around its position (degrees). */
+/** Rotate text around its position (degrees). Rotation is stored in degrees. */
 export function rotateText(node: TextNode, deg: number): TextNode {
   return {
     ...node,
     transform: {
       ...node.transform,
-      rotation: (deg * Math.PI) / 180,
+      rotation: deg,
     },
   };
 }

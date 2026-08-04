@@ -5,7 +5,7 @@
 import type { FrameNode, SceneNode, StudioDocument } from '../model';
 import { emptyDoc, makeFrame, makeShape } from '../scenes/helpers';
 import type { BuiltinBuildContext, BuiltinTemplate } from './types';
-import { makeRoleText } from './templateType';
+import { makeRoleText, withHalo } from './templateType';
 import { makeCheckBox, makePillBadge } from './xhsCraft';
 import { FONT_HAND, FONT_MARKER, FONT_YUAN } from './templatePalettes';
 import {
@@ -104,12 +104,16 @@ const sigJournalSpring: BuiltinTemplate = {
         fontSize: 56,
         bold: true,
       }),
-      makeRoleText(frameId, 'script', 'Spring', W - 160, 120, XHS_SIG_RAMP, {
-        name: '\u6807\u7b7e',
-        color: '#B8E05A',
-        fontFamily: FONT_MARKER,
-        fontSize: 40,
-      }),
+      withHalo(
+        makeRoleText(frameId, 'script', 'Spring', W - 160, 120, XHS_SIG_RAMP, {
+          name: '\u6807\u7b7e',
+          color: '#B8E05A',
+          fontFamily: FONT_MARKER,
+          fontSize: 40,
+        }),
+        'rgba(26,21,16,0.5)',
+        3,
+      ),
     ];
     const sections = [
       '\u9002\u5f53\u5f3a\u5ea6\u7684\u6237\u5916\u8fd0\u52a8',
@@ -300,14 +304,19 @@ const sigJournalEmergency: BuiltinTemplate = {
         labelColor: ink,
         ramp: XHS_SIG_RAMP,
         name: '\u6807\u7b7e',
+        fontSize: 20,
       }),
-      makeRoleText(frameId, 'display', '\u5c0f\u670b\u53cb', 100, 200, XHS_SIG_RAMP, {
-        name: '\u526f\u6807',
-        color: orange,
-        fontFamily: FONT_YUAN,
-        fontSize: 48,
-        bold: true,
-      }),
+      withHalo(
+        makeRoleText(frameId, 'display', '\u5c0f\u670b\u53cb', 100, 200, XHS_SIG_RAMP, {
+          name: '\u526f\u6807',
+          color: orange,
+          fontFamily: FONT_YUAN,
+          fontSize: 48,
+          bold: true,
+        }),
+        'rgba(26,21,16,0.45)',
+        3,
+      ),
       makeOutlinedDisplayText(frameId, '\u7a81\u7136\u751f\u75c5', W / 2, 320, {
         fontSize: 72,
         color: ink,
@@ -460,7 +469,7 @@ const sigJournalTime: BuiltinTemplate = {
         name: '\u6807\u7b7e',
         color: 'rgba(26,21,16,0.45)',
         fontFamily: FONT_META,
-        fontSize: 18,
+        fontSize: 20,
       }),
       ...(await scatterStickers(frameId, assets, [
         { id: 'clock', x: W - 260, y: H - 340, width: 160, deg: -6 },
@@ -631,7 +640,7 @@ const sigJournalSticky: BuiltinTemplate = {
       });
       card.forEach((n) => {
         if ('transform' in n) {
-          n.transform = { ...n.transform, rotation: (deg * Math.PI) / 180 };
+          n.transform = { ...n.transform, rotation: deg };
         }
       });
       nodes.push(
@@ -731,13 +740,17 @@ const sigJournalTorn: BuiltinTemplate = {
         fontSize: 48,
         bold: true,
       }),
-      makeRoleText(frameId, 'script', '\u6162\u4e00\u70b9\u4e5f\u6ca1\u5173\u7cfb', W / 2, 380, XHS_SIG_RAMP, {
-        name: '\u6807\u9898',
-        align: 'center',
-        color: '#FFFCF7',
-        fontFamily: FONT_KAI,
-        fontSize: 40,
-      }),
+      withHalo(
+        makeRoleText(frameId, 'script', '\u6162\u4e00\u70b9\u4e5f\u6ca1\u5173\u7cfb', W / 2, 380, XHS_SIG_RAMP, {
+          name: '\u6807\u9898',
+          align: 'center',
+          color: '#FFFCF7',
+          fontFamily: FONT_KAI,
+          fontSize: 40,
+        }),
+        'rgba(26,21,16,0.5)',
+        3,
+      ),
       makeRoleText(
         frameId,
         'body',

@@ -12,15 +12,17 @@ import {
   type BootstrapResult,
   type StoredAsset,
 } from './projectStore';
+import {
+  IDB_STORE,
+  collectAssets as idbCollectAssets,
+  hydrateAssets as idbHydrateAssets,
+  idbDelete,
+  idbGet,
+  idbGetAllKeys,
+  idbPut,
+} from './idb';
 
-/** Must stay in lockstep with projectStore — same DB name / version. */
-const DB_NAME = 'piclab-studio';
-const VERSION = 4;
-const TEMPLATES = 'templates';
-const PROJECTS = 'projects';
-const PREFS = 'prefs';
-const FOLDERS = 'folders';
-const LEGACY_KV = 'kv';
+const { templates: TEMPLATES } = IDB_STORE;
 
 export type UserTemplateMeta = {
   id: string;
@@ -37,92 +39,20 @@ export type UserTemplate = UserTemplateMeta & {
   assets: StoredAsset[];
 };
 
-function openDb(): Promise<IDBDatabase> {
-  return new Promise((resolve, reject) => {
-    const req = indexedDB.open(DB_NAME, VERSION);
-    req.onupgradeneeded = () => {
-      const db = req.result;
-      // Mirror projectStore upgrade so either module can own the bump.
-      if (!db.objectStoreNames.contains(LEGACY_KV)) db.createObjectStore(LEGACY_KV);
-      if (!db.objectStoreNames.contains(PROJECTS)) db.createObjectStore(PROJECTS);
-      if (!db.objectStoreNames.contains(PREFS)) db.createObjectStore(PREFS);
-      if (!db.objectStoreNames.contains(TEMPLATES)) db.createObjectStore(TEMPLATES);
-      if (!db.objectStoreNames.contains(FOLDERS)) db.createObjectStore(FOLDERS);
-    };
-    req.onsuccess = () => resolve(req.result);
-    req.onerror = () => reject(req.error);
-  });
+function idbGetT<T>(key: string): Promise<T | null> {
+  return idbGet<T>(TEMPLATES, key);
 }
 
-function idbGet<T>(key: string): Promise<T | null> {
-  return openDb().then(
-    (db) =>
-      new Promise((resolve, reject) => {
-        const tx = db.transaction(TEMPLATES, 'readonly');
-        const req = tx.objectStore(TEMPLATES).get(key);
-        req.onsuccess = () => resolve((req.result as T) ?? null);
-        req.onerror = () => reject(req.error);
-      }),
-  );
+function idbPutT(key: string, value: unknown): Promise<void> {
+  return idbPut(TEMPLATES, key, value);
 }
 
-function idbPut(key: string, value: unknown): Promise<void> {
-  return openDb().then(
-    (db) =>
-      new Promise((resolve, reject) => {
-        const tx = db.transaction(TEMPLATES, 'readwrite');
-        tx.objectStore(TEMPLATES).put(value, key);
-        tx.oncomplete = () => resolve();
-        tx.onerror = () => reject(tx.error);
-      }),
-  );
+function idbDeleteT(key: string): Promise<void> {
+  return idbDelete(TEMPLATES, key);
 }
 
-function idbDelete(key: string): Promise<void> {
-  return openDb().then(
-    (db) =>
-      new Promise((resolve, reject) => {
-        const tx = db.transaction(TEMPLATES, 'readwrite');
-        tx.objectStore(TEMPLATES).delete(key);
-        tx.oncomplete = () => resolve();
-        tx.onerror = () => reject(tx.error);
-      }),
-  );
-}
-
-function idbGetAllKeys(): Promise<string[]> {
-  return openDb().then(
-    (db) =>
-      new Promise((resolve, reject) => {
-        const tx = db.transaction(TEMPLATES, 'readonly');
-        const req = tx.objectStore(TEMPLATES).getAllKeys();
-        req.onsuccess = () => resolve((req.result as IDBValidKey[]).map(String));
-        req.onerror = () => reject(req.error);
-      }),
-  );
-}
-
-function imageDataToPngBlob(imageData: ImageData): Promise<Blob> {
-  const c = document.createElement('canvas');
-  c.width = imageData.width;
-  c.height = imageData.height;
-  c.getContext('2d')!.putImageData(imageData, 0, 0);
-  return new Promise((resolve, reject) => {
-    c.toBlob((blob) => {
-      if (blob) resolve(blob);
-      else reject(new Error('PNG encode failed'));
-    }, 'image/png');
-  });
-}
-
-async function blobToImageData(blob: Blob): Promise<ImageData> {
-  const bitmap = await createImageBitmap(blob);
-  const c = document.createElement('canvas');
-  c.width = bitmap.width;
-  c.height = bitmap.height;
-  const ctx = c.getContext('2d')!;
-  ctx.drawImage(bitmap, 0, 0);
-  return ctx.getImageData(0, 0, c.width, c.height);
+function idbGetAllKeysT(): Promise<string[]> {
+  return idbGetAllKeys(TEMPLATES);
 }
 
 async function collectAssets(
@@ -133,31 +63,14 @@ async function collectAssets(
   for (const node of Object.values(document.nodes)) {
     if (node.type === 'image') assetIds.add(node.assetId);
   }
-  const stored: StoredAsset[] = [];
-  for (const id of assetIds) {
-    const asset = assets.get(id);
-    if (!asset) continue;
-    stored.push({
-      id: asset.id,
-      width: asset.width,
-      height: asset.height,
-      blob: await imageDataToPngBlob(asset.imageData),
-    });
-  }
-  return stored;
+  return idbCollectAssets(assetIds, assets);
 }
 
 async function hydrateAssetsWithRemap(
   stored: StoredAsset[],
   assets: AssetStore,
 ): Promise<Map<string, string>> {
-  const map = new Map<string, string>();
-  for (const a of stored) {
-    const imageData = await blobToImageData(a.blob);
-    const asset = assets.putImageData(imageData);
-    map.set(a.id, asset.id);
-  }
-  return map;
+  return idbHydrateAssets(stored, assets);
 }
 
 function toMeta(t: UserTemplate): UserTemplateMeta {
@@ -172,10 +85,10 @@ function toMeta(t: UserTemplate): UserTemplateMeta {
 }
 
 export async function listUserTemplates(): Promise<UserTemplateMeta[]> {
-  const keys = await idbGetAllKeys();
+  const keys = await idbGetAllKeysT();
   const metas: UserTemplateMeta[] = [];
   for (const key of keys) {
-    const t = await idbGet<UserTemplate>(key);
+    const t = await idbGetT<UserTemplate>(key);
     if (t) metas.push(toMeta(t));
   }
   metas.sort((a, b) => b.updatedAt - a.updatedAt);
@@ -183,7 +96,7 @@ export async function listUserTemplates(): Promise<UserTemplateMeta[]> {
 }
 
 export async function getUserTemplate(id: string): Promise<UserTemplate | null> {
-  return idbGet<UserTemplate>(id);
+  return idbGetT<UserTemplate>(id);
 }
 
 export async function saveUserTemplate(
@@ -209,7 +122,7 @@ export async function saveUserTemplate(
     updatedAt: now,
     thumbnail: opts?.thumbnail,
   };
-  await idbPut(id, record);
+  await idbPutT(id, record);
   return toMeta(record);
 }
 
@@ -226,12 +139,12 @@ export async function renameUserTemplate(
     document: { ...existing.document, name: trimmed },
     updatedAt: Date.now(),
   };
-  await idbPut(id, next);
+  await idbPutT(id, next);
   return toMeta(next);
 }
 
 export async function deleteUserTemplate(id: string): Promise<void> {
-  await idbDelete(id);
+  await idbDeleteT(id);
 }
 
 /** Instantiate L3 user template as a new project (remapped ids + cloned asset blobs). */

@@ -1,16 +1,20 @@
 import type { AssetStore } from '../store/assetStore';
 import type { ScenePlugin } from '../plugins/types';
 import {
+  FONT_FANG,
   FONT_HEI,
-  FONT_SANS,
-  NIGHT_SEA,
+  FONT_KAI,
+  FONT_LATIN_SERIF,
+  FONT_META,
+  CINNABAR,
 } from '../templates/templatePalettes';
-import { addPageWithFrame, emptyDoc, fitImageNode, makeFrame, makeShape, makeText } from './helpers';
+import { addPageWithFrame, emptyDoc, fitImageNode, makeFrame, makeLine, makeText } from './helpers';
 
 /** ~90x54mm @ ~300dpi-ish landscape card */
 const W = 1050;
 const H = 600;
-const P = NIGHT_SEA;
+const P = CINNABAR;
+const M = 88; // 左轴
 
 export const cardScene: ScenePlugin = {
   id: 'card',
@@ -26,107 +30,122 @@ export const cardScene: ScenePlugin = {
     const { doc, frameId: frontFrameId, pageId: frontPageId } = emptyDoc('名片', 'card');
     doc.pages[0]!.name = '正面';
 
-    const front = makeFrame(frontFrameId, W, H, '正面', P.bg);
+    const front = makeFrame(frontFrameId, W, H, '正面', P.field);
     const frontChildren: string[] = [];
-    const m = Math.round(W * 0.08);
 
     if (opts?.fromImage && assets) {
       const imageNode = fitImageNode(frontFrameId, assets, opts.fromImage, W, H, '背景图');
-      imageNode.opacity = 0.45;
+      imageNode.opacity = 0.35;
       doc.nodes[imageNode.id] = imageNode;
       frontChildren.push(imageNode.id);
     }
 
-    const side = makeShape(frontFrameId, 'rect', {
-      x: 0,
-      y: 0,
-      width: Math.round(W * 0.06),
-      height: H,
-      fill: P.accent,
-      name: '侧色条',
-    });
-    side.locked = true;
-    const rule = makeShape(frontFrameId, 'line', {
-      x: m,
-      y: H * 0.58,
-      width: W * 0.4,
-      height: 0,
-      fill: P.muted,
-      stroke: P.muted,
-      strokeWidth: 1.5,
-      name: '分隔线',
+    // ── 顶部细线（签名：横贯头线）──────────────────────────
+    const head = makeLine(frontFrameId, M, 96, W - M * 2, 0, {
+      stroke: P.accent,
+      strokeWidth: 2,
+      name: '头线',
+      locked: true,
     });
 
-    const name = makeText(frontFrameId, '你的姓名', m, H * 0.32, 48, {
+    // ── 姓名大字（左侧轴）──────────────────────────────────
+    const name = makeText(frontFrameId, '你的姓名', M, 168, 72, {
       name: '姓名',
       align: 'left',
       color: P.ink,
       strokeWidth: 0,
       fontFamily: FONT_HEI,
     });
-    const role = makeText(frontFrameId, '职位 / 公司', m, H * 0.46, 22, {
-      name: '职称',
+    const enName = makeText(frontFrameId, 'YOUR NAME', M, 280, 18, {
+      name: '英文名',
       align: 'left',
       color: P.accent,
       strokeWidth: 0,
       bold: false,
-      fontFamily: FONT_SANS,
+      fontFamily: FONT_LATIN_SERIF,
     });
-    const phone = makeText(frontFrameId, '电话 138-0000-0000', m, H * 0.7, 20, {
+    const role = makeText(frontFrameId, '职位 · 公司', M, 380, 24, {
+      name: '职衔',
+      align: 'left',
+      color: P.mute,
+      strokeWidth: 0,
+      bold: false,
+      fontFamily: FONT_FANG,
+    });
+
+    // ── 底部联系方式（左列，垂直轴）────────────────────────
+    const phone = makeText(frontFrameId, 'TEL  138-0000-0000', M, H - 168, 20, {
       name: '电话',
       align: 'left',
       color: P.ink,
       strokeWidth: 0,
       bold: false,
+      fontFamily: FONT_META,
+    });
+    const mail = makeText(frontFrameId, 'MAIL  you@company.com', M, H - 120, 20, {
+      name: '邮箱',
+      align: 'left',
+      color: P.ink,
+      strokeWidth: 0,
+      bold: false,
+      fontFamily: FONT_META,
     });
 
-    doc.nodes[side.id] = side;
-    doc.nodes[rule.id] = rule;
-    doc.nodes[name.id] = name;
-    doc.nodes[role.id] = role;
-    doc.nodes[phone.id] = phone;
-    frontChildren.push(side.id, rule.id, name.id, role.id, phone.id);
+    // ── 右侧竖排"印"字（签名动作）─────────────────────────
+    const stamp = makeText(frontFrameId, '印', W - 172, 120, 120, {
+      name: '印章字',
+      align: 'center',
+      color: P.accent,
+      strokeWidth: 0,
+      writingMode: 'vertical',
+      fontFamily: FONT_KAI,
+    });
 
-    front.children = frontChildren;
     doc.nodes[frontFrameId] = front;
+    for (const n of [head, name, enName, role, phone, mail, stamp]) {
+      doc.nodes[n.id] = n;
+      frontChildren.push(n.id);
+    }
+    front.children = frontChildren;
 
+    // ── 背面：白场居中 + 朱红印章 ──────────────────────────
     const { frameId: backFrameId } = addPageWithFrame(doc, {
       name: '背面',
       width: W,
       height: H,
-      fill: P.bgAlt,
+      fill: P.panel,
       activate: false,
     });
     const back = doc.nodes[backFrameId]!;
     if (back.type !== 'frame') throw new Error('expected back frame');
 
-    const backBar = makeShape(backFrameId, 'rect', {
-      x: 0,
-      y: H - 12,
-      width: W,
-      height: 12,
-      fill: P.accent,
-      name: '底条',
-    });
-    backBar.locked = true;
-    const company = makeText(backFrameId, '公司名称', W / 2, H * 0.42, 36, {
-      name: '公司',
-      color: P.ink,
+    const backMark = makeText(backFrameId, '印', W / 2, H / 2 - 96, 160, {
+      name: '印章',
+      align: 'center',
+      color: P.accent,
       strokeWidth: 0,
-      fontFamily: FONT_HEI,
+      fontFamily: FONT_KAI,
     });
-    const address = makeText(backFrameId, '地址 / 网址 / 邮箱', W / 2, H * 0.58, 20, {
-      name: '地址',
-      color: P.muted,
+    const backLine = makeLine(backFrameId, W / 2 - 80, H / 2 + 40, 160, 0, {
+      stroke: 'rgba(156,27,48,0.4)',
+      strokeWidth: 1.5,
+      name: '背线',
+      locked: true,
+    });
+    const backUrl = makeText(backFrameId, 'piclab.studio', W / 2, H - 140, 20, {
+      name: '网址',
+      align: 'center',
+      color: P.mute,
       strokeWidth: 0,
       bold: false,
+      fontFamily: FONT_META,
     });
 
-    doc.nodes[backBar.id] = backBar;
-    doc.nodes[company.id] = company;
-    doc.nodes[address.id] = address;
-    back.children = [backBar.id, company.id, address.id];
     doc.nodes[backFrameId] = back;
+    for (const n of [backMark, backLine, backUrl]) {
+      doc.nodes[n.id] = n;
+      back.children.push(n.id);
+    }
 
     doc.activePageId = frontPageId;
     doc.selection = [name.id];

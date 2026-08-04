@@ -230,7 +230,7 @@ export function buildXhsCardNodes(
           align: isBig ? 'center' : 'left',
           color: pal.muted,
           fontFamily: FONT_META,
-          fontSize: 18,
+          fontSize: 20,
         },
       );
       push(eyebrow, title, sub, foot);
